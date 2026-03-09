@@ -52,6 +52,7 @@
 #define ZGMemoryViewerAddressField @"ZGMemoryViewerAddressField"
 #define ZGMemoryViewerProcessInternalName @"ZGMemoryViewerProcessName"
 #define ZGMemoryViewerShowsDataInspector @"ZGMemoryViewerShowsDataInspector"
+#define ZGMemoryViewerBytesPerColumn @"ZGMemoryViewerBytesPerColumn"
 
 #define ZGLocalizedStringFromMemoryViewerTable(string) NSLocalizedStringFromTable((string), @"[Code] Memory Viewer", nil)
 
@@ -114,7 +115,7 @@
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ZGMemoryViewerShowsDataInspector : @YES}];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ZGMemoryViewerShowsDataInspector : @YES, ZGMemoryViewerBytesPerColumn : @1}];
 	});
 }
 
@@ -132,8 +133,8 @@
 {
 	[super encodeRestorableStateWithCoder:coder];
 
-    [coder encodeObject:self.addressTextField.stringValue forKey:ZGMemoryViewerAddressField];
-    [coder encodeObject:self.desiredProcessInternalName forKey:ZGMemoryViewerProcessInternalName];
+	[coder encodeObject:self.addressTextField.stringValue forKey:ZGMemoryViewerAddressField];
+	[coder encodeObject:self.desiredProcessInternalName forKey:ZGMemoryViewerProcessInternalName];
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
@@ -214,6 +215,8 @@
 		[self toggleDataInspector:nil];
 	}
 
+	[self restoreBytesPerColumn];
+
 	[self setupProcessListNotifications];
 
 	self.desiredProcessInternalName = self.lastChosenInternalProcessName;
@@ -235,6 +238,27 @@
 	return READ_MEMORY_INTERVAL;
 }
 
+#pragma mark Byte Grouping
+
+- (void)restoreBytesPerColumn
+{
+	NSUInteger bytesPerColumn = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:ZGMemoryViewerBytesPerColumn];
+	// Clamp to valid values in case the stored preference is somehow invalid.
+	if (bytesPerColumn != 1 && bytesPerColumn != 2 && bytesPerColumn != 4 && bytesPerColumn != 8 && bytesPerColumn != 16)
+	{
+		bytesPerColumn = 1;
+	}
+	_textView.controller.bytesPerColumn = bytesPerColumn;
+}
+
+- (IBAction)changeByteGrouping:(nullable id)sender
+{
+	NSMenuItem *menuItem = (NSMenuItem *)sender;
+	NSUInteger bytesPerColumn = (NSUInteger)menuItem.tag;
+	_textView.controller.bytesPerColumn = bytesPerColumn;
+	[[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)bytesPerColumn forKey:ZGMemoryViewerBytesPerColumn];
+}
+
 #pragma mark Menu Item Validation
 
 - (BOOL)isProcessIdentifierHalted:(pid_t)processIdentifier
@@ -249,6 +273,10 @@
 	if (userInterfaceItem.action == @selector(toggleDataInspector:))
 	{
 		[menuItem setState:_showsDataInspector];
+	}
+	else if (userInterfaceItem.action == @selector(changeByteGrouping:))
+	{
+		[menuItem setState:(_textView.controller.bytesPerColumn == (NSUInteger)menuItem.tag)];
 	}
 	else if (userInterfaceItem.action == @selector(copyAddress:) || userInterfaceItem.action == @selector(copyRawAddress:) || userInterfaceItem.action == @selector(showDebugger:))
 	{
@@ -528,7 +556,8 @@
 		return;
 	}
 	
-	[self changeMemoryViewWithSelectionLength:DEFAULT_MEMORY_VIEWER_SELECTION_LENGTH];
+	NSUInteger selectionLength = (_textView.controller.bytesPerColumn != 0) ? _textView.controller.bytesPerColumn : 1;
+	[self changeMemoryViewWithSelectionLength:selectionLength];
 }
 
 - (void)changeMemoryViewWithSelectionLength:(ZGMemorySize)selectionLength
