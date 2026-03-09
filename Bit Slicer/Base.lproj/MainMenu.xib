@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24764" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24764"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -560,40 +560,40 @@ CA
                             <menuItem title="Byte Grouping" id="JYw-6Z-hi6">
                                 <menu key="submenu" title="Byte Grouping" id="EMn-H5-KKf">
                                     <items>
-                                        <menuItem title="1 Byte" tag="1" id="ugG-Al-TqL">
+                                        <menuItem title="1" tag="1" id="ugG-Al-TqL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="changeByteGrouping:" target="-1" id="MkF-iz-7b0"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="2 Bytes" tag="2" id="ZGA-3B-vR4" userLabel="2 Bytes">
+                                        <menuItem title="2" tag="2" id="ZGA-3B-vR4">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="changeByteGrouping:" target="-1" id="SFT-5H-ffD"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="4 Bytes" tag="4" id="I6L-Ze-ayb" userLabel="4 Bytes">
+                                        <menuItem title="4" tag="4" id="I6L-Ze-ayb">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="changeByteGrouping:" target="-1" id="bLC-Wk-xTY"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="8 Bytes" tag="8" id="oV3-aC-buW" userLabel="8 Bytes">
+                                        <menuItem title="8" tag="8" id="oV3-aC-buW">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="changeByteGrouping:" target="-1" id="qiN-xF-dOV"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="16 Bytes" tag="16" id="nT6-jU-fBE" userLabel="16 Bytes">
+                                        <menuItem title="16" tag="16" id="nT6-jU-fBE">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="changeByteGrouping:" target="-1" id="dN8-nd-380"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Cycle Byte Grouping" tag="16" hidden="YES" keyEquivalent=" " id="QxZ-yj-vW5">
+                                        <menuItem title="32" tag="32" id="rnu-RD-UQp">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="cycleByteGrouping:" target="-1" id="Am2-MG-ful"/>
+                                                <action selector="changeByteGrouping:" target="-1" id="q9u-bB-xZ7"/>
                                             </connections>
                                         </menuItem>
                                     </items>

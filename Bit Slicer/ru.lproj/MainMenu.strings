@@ -194,6 +194,9 @@
 /* Class = "NSMenuItem"; title = "Show Memory Viewer"; ObjectID = "801"; */
 "801.title" = "Просмотр памяти";
 
+/* Class = "NSMenuItem"; title = "Byte Grouping"; ObjectID = "JYw-6Z-hi6"; */
+"JYw-6Z-hi6.title" = "Группировка байтов";
+
 /* Class = "NSMenuItem"; title = "Store All Values"; ObjectID = "811"; */
 "811.title" = "Сохранить все значения";
 

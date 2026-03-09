@@ -73,8 +73,6 @@
 	NSInteger _lastUpdateCount;
 	
 	IBOutlet HFTextView *_textView;
-
-	id _Nullable _keyEventMonitor;
 }
 
 #pragma mark Accessors
@@ -218,7 +216,6 @@
 	}
 
 	[self restoreBytesPerColumn];
-	[self startKeyEventMonitor];
 
 	[self setupProcessListNotifications];
 
@@ -254,53 +251,10 @@
 	_textView.controller.bytesPerColumn = bytesPerColumn;
 }
 
-- (void)startKeyEventMonitor
-{
-	_keyEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyDown handler:^NSEvent * _Nullable(NSEvent *event) {
-		if (event.window != self.window)
-		{
-			return event;
-		}
-		NSEventModifierFlags relevantFlags = event.modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
-		if ([event.charactersIgnoringModifiers isEqualToString:@" "] && relevantFlags == 0)
-		{
-			NSResponder *firstResponder = self.window.firstResponder;
-			if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:self->_textView])
-			{
-				[self cycleByteGrouping:nil];
-				return nil;
-			}
-		}
-		return event;
-	}];
-}
-
 - (IBAction)changeByteGrouping:(nullable id)sender
 {
 	NSMenuItem *menuItem = (NSMenuItem *)sender;
 	NSUInteger bytesPerColumn = (NSUInteger)menuItem.tag;
-	_textView.controller.bytesPerColumn = bytesPerColumn;
-	[[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)bytesPerColumn forKey:ZGMemoryViewerBytesPerColumn];
-}
-
-- (IBAction)cycleByteGrouping:(nullable id)__unused sender
-{
-	static const NSUInteger kByteSizes[] = {1, 2, 4, 8, 16};
-	static const NSUInteger kByteSizeCount = sizeof(kByteSizes) / sizeof(kByteSizes[0]);
-
-	NSUInteger currentBytesPerColumn = _textView.controller.bytesPerColumn;
-	NSUInteger nextIndex = 0;
-
-	for (NSUInteger index = 0; index < kByteSizeCount; index++)
-	{
-		if (kByteSizes[index] == currentBytesPerColumn)
-		{
-			nextIndex = (index + 1) % kByteSizeCount;
-			break;
-		}
-	}
-
-	NSUInteger bytesPerColumn = kByteSizes[nextIndex];
 	_textView.controller.bytesPerColumn = bytesPerColumn;
 	[[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)bytesPerColumn forKey:ZGMemoryViewerBytesPerColumn];
 }
@@ -815,16 +769,6 @@
 	HFRange selectedAddressRange = [self selectedAddressRange];
 	id <ZGShowMemoryWindow> delegate = self.delegate;
 	[delegate showDebuggerWindowWithProcess:self.currentProcess address:selectedAddressRange.location];
-}
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-	[super windowWillClose:notification];
-	if (_keyEventMonitor != nil)
-	{
-		[NSEvent removeMonitor:ZGUnwrapNullableObject(_keyEventMonitor)];
-		_keyEventMonitor = nil;
-	}
 }
 
 @end

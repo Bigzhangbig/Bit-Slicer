@@ -54,7 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (IBAction)toggleDataInspector:(nullable id)sender;
 - (IBAction)changeByteGrouping:(nullable id)sender;
-- (IBAction)cycleByteGrouping:(nullable id)sender;
 
 @end
 
