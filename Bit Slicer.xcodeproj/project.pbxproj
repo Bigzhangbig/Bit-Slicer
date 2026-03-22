@@ -38,7 +38,6 @@
 		7231440819C607C700FBE342 /* ZGWatchVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 7231440719C607C700FBE342 /* ZGWatchVariable.m */; };
 		7231440E19C6230F00FBE342 /* [Code] Watch Variable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 7231440C19C6230F00FBE342 /* [Code] Watch Variable.stringsdict */; };
 		7235B7A424D7BF980029580A /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7A324D7BF980029580A /* libudis86.a */; };
-		7235B7A724D7C1260029580A /* yasm in Copy Files */ = {isa = PBXBuildFile; fileRef = 7235B7A524D7C1050029580A /* yasm */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7235B7AF24D7CE0B0029580A /* ShortcutRecorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; };
 		7235B7B024D7CE180029580A /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7235B7B224D7D9B10029580A /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7B124D7D9B10029580A /* DDMathParser.framework */; };
@@ -254,7 +253,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				7235B7A724D7C1260029580A /* yasm in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,7 +348,6 @@
 		7235B7A124D7BF770029580A /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = deps/udis86/udis86/libudis86/types.h; sourceTree = "<group>"; };
 		7235B7A224D7BF770029580A /* itab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = itab.h; path = deps/udis86/udis86/libudis86/itab.h; sourceTree = "<group>"; };
 		7235B7A324D7BF980029580A /* libudis86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libudis86.a; path = deps/udis86/udis86/libudis86.a; sourceTree = "<group>"; };
-		7235B7A524D7C1050029580A /* yasm */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = yasm; path = deps/yasm/yasm; sourceTree = "<group>"; };
 		7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ShortcutRecorder.framework; path = deps/ShortcutRecorder/ShortcutRecorder.framework; sourceTree = "<group>"; };
 		7235B7B124D7D9B10029580A /* DDMathParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DDMathParser.framework; path = deps/DDMathParser/DDMathParser.framework; sourceTree = "<group>"; };
 		7235B7B724D7DD8C0029580A /* pythonlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pythonlib.h; path = "Bit Slicer/pythonlib.h"; sourceTree = "<group>"; };
@@ -869,7 +866,6 @@
 			isa = PBXGroup;
 			children = (
 				72A360522E9DF9BF00E7C8AD /* bitslicericon.icon */,
-				7235B7A524D7C1050029580A /* yasm */,
 				77F115AC17D2EAE4009E002A /* bitslicerdocicon.iconset */,
 				77F115B017D2EAF3009E002A /* Bit_Slicer-Info.plist */,
 				72DBC8EF1B7657F20092ED75 /* LICENSE */,
@@ -2424,7 +2420,6 @@
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zgcoder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -2514,7 +2509,6 @@
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zgcoder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -2625,7 +2619,6 @@
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 				WARNING_CFLAGS = (
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
@@ -2740,7 +2733,6 @@
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 				WARNING_CFLAGS = (
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
@@ -2772,6 +2764,7 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2808,6 +2801,7 @@
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";

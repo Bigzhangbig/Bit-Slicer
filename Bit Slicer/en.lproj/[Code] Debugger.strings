@@ -112,15 +112,6 @@
 /* Alert message for failing to step out */
 "failedStepOutAlertMessage" = "Stepping out of the procedure failed.";
 
-/* Error indicating yasm assembler failed to launch */
-"failedLaunchYasm" = "yasm task failed to launch";
-
-/* Error indicating yasm did not assemble anything */
-"failedAssembleWithZeroBytes" = "nothing (0 bytes) was assembled.";
-
-/* Error indicating yasm task could not be started */
-"failedAssembleWithBadFileDescriptor" = "failed to open file descriptor on %s.";
-
 /* Error indicating keystone engine could not be started (unlikely to occur) */
 "failedAssembleWithStartingEngine" = "assembly engine failed to start with error %u.";
 

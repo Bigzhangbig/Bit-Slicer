@@ -158,169 +158,84 @@ const uint8_t gBreakpointOpcode[1] = {0xCC};
 #define ASSEMBLER_ERROR_DOMAIN @"Assembling Failed"
 + (NSData *)assembleInstructionText:(NSString *)instructionText atInstructionPointer:(ZGMemoryAddress)instructionPointer processType:(ZGProcessType)processType error:(NSError * __autoreleasing *)error
 {
-	NSData *data = nil;
-	if (ZG_PROCESS_TYPE_IS_ARM64(processType))
+	NSString *sanitizedInstructionText;
+	if ([instructionText hasPrefix:@";"])
 	{
-		NSString *sanitizedInstructionText;
-		if ([instructionText hasPrefix:@";"])
-		{
-			// Process out all comments which may come from the code injection prompt
-			// Keystone doesn't support feeding in comments
-			NSMutableArray<NSString *> *newInstructionLines = [NSMutableArray array];
-			[instructionText enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull __unused stop) {
-				NSString *regularLine;
-				NSRange commentRange = [line rangeOfString:@";"];
-				if (commentRange.location != NSNotFound)
-				{
-					regularLine = [line substringToIndex:commentRange.location];
-				}
-				else
-				{
-					regularLine = line;
-				}
-				
-				if (regularLine.length > 0)
-				{
-					[newInstructionLines addObject:regularLine];
-				}
-			}];
-			
-			sanitizedInstructionText = [newInstructionLines componentsJoinedByString:@"\n"];
-		}
-		else
-		{
-			sanitizedInstructionText = instructionText;
-		}
-		
-		ks_engine *engine;
-		ks_err openResult = ks_open(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, &engine);
-		if (openResult == KS_ERR_OK)
-		{
-			unsigned char *encoding = NULL;
-			size_t encodingSize = 0;
-			size_t numberOfStatementsEncoded = 0;
-			
-			if (ks_asm(engine, sanitizedInstructionText.UTF8String, instructionPointer, &encoding, &encodingSize, &numberOfStatementsEncoded) == KS_ERR_OK)
+		// Process out all comments which may come from the code injection prompt
+		// Keystone doesn't support feeding in comments
+		NSMutableArray<NSString *> *newInstructionLines = [NSMutableArray array];
+		[instructionText enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull __unused stop) {
+			NSString *regularLine;
+			NSRange commentRange = [line rangeOfString:@";"];
+			if (commentRange.location != NSNotFound)
 			{
-				data = [NSData dataWithBytes:encoding length:encodingSize];
-				
-				ks_free(encoding);
+				regularLine = [line substringToIndex:commentRange.location];
 			}
 			else
 			{
-				if (error != nil)
-				{
-					*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : [NSString stringWithFormat:ZGLocalizedStringFromDebuggerTable(@"failedAssembleCode"), ks_errno(engine)]}];
-				}
+				regularLine = line;
 			}
 			
-			ks_close(engine);
+			if (regularLine.length > 0)
+			{
+				[newInstructionLines addObject:regularLine];
+			}
+		}];
+		
+		sanitizedInstructionText = [newInstructionLines componentsJoinedByString:@"\n"];
+	}
+	else
+	{
+		sanitizedInstructionText = instructionText;
+	}
+	
+	NSData *data = nil;
+	ks_engine *engine = NULL;
+	ks_err openResult;
+	if (ZG_PROCESS_TYPE_IS_ARM64(processType))
+	{
+		openResult = ks_open(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, &engine);
+	}
+	else
+	{
+		if (ZG_PROCESS_TYPE_IS_64_BIT(processType))
+		{
+			openResult = ks_open(KS_ARCH_X86, KS_MODE_64, &engine);
+		}
+		else
+		{
+			openResult = ks_open(KS_ARCH_X86, KS_MODE_32, &engine);
+		}
+	}
+	
+	if (openResult == KS_ERR_OK)
+	{
+		unsigned char *encoding = NULL;
+		size_t encodingSize = 0;
+		size_t numberOfStatementsEncoded = 0;
+		
+		if (ks_asm(engine, sanitizedInstructionText.UTF8String, instructionPointer, &encoding, &encodingSize, &numberOfStatementsEncoded) == KS_ERR_OK)
+		{
+			data = [NSData dataWithBytes:encoding length:encodingSize];
+			
+			ks_free(encoding);
 		}
 		else
 		{
 			if (error != nil)
 			{
-				*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : [NSString stringWithFormat:ZGLocalizedStringFromDebuggerTable(@"failedAssembleWithStartingEngine"), openResult]}];
+				*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : [NSString stringWithFormat:ZGLocalizedStringFromDebuggerTable(@"failedAssembleCode"), ks_errno(engine)]}];
 			}
 		}
+		
+		ks_close(engine);
 	}
-	else if (ZG_PROCESS_TYPE_IS_X86_FAMILY(processType))
+	else
 	{
-		NSString *outputFileTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"assembler_output.XXXXXX"];
-		const char *tempFileTemplateCString = [outputFileTemplate fileSystemRepresentation];
-		size_t templateFileTemplateLength = strlen(tempFileTemplateCString);
-		char *tempFileNameCString = malloc(templateFileTemplateLength + 1);
-		strncpy(tempFileNameCString, tempFileTemplateCString, templateFileTemplateLength + 1);
-		int fileDescriptor = mkstemp(tempFileNameCString);
-		
-		if (fileDescriptor != -1)
+		if (error != nil)
 		{
-			close(fileDescriptor);
-			
-			NSFileManager *fileManager = [[NSFileManager alloc] init];
-			NSString *outputFilePath = [fileManager stringWithFileSystemRepresentation:tempFileNameCString length:strlen(tempFileNameCString)];
-			
-			NSTask *task = [[NSTask alloc] init];
-			task.launchPath = [[[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"yasm"];
-			[task setArguments:@[@"--arch=x86", @"-", @"-o", outputFilePath]];
-			
-			NSPipe *inputPipe = [NSPipe pipe];
-			[task setStandardInput:inputPipe];
-			
-			NSPipe *errorPipe = [NSPipe pipe];
-			[task setStandardError:errorPipe];
-			
-			BOOL failedToLaunchTask = NO;
-			
-			@try
-			{
-				[task launch];
-			}
-			@catch (NSException *exception)
-			{
-				failedToLaunchTask = YES;
-				if (error != nil)
-				{
-					NSString *exceptionReason = exception.reason != nil ? exception.reason : @"";
-					*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"description" : [NSString stringWithFormat:@"%@: Name: %@, Reason: %@", ZGLocalizedStringFromDebuggerTable(@"failedLaunchYasm"), exception.name, exceptionReason], @"reason" : exceptionReason}];
-				}
-			}
-			
-			if (!failedToLaunchTask)
-			{
-				// yasm likes to be fed in an aligned instruction pointer for its org specifier, so we'll comply with that
-				ZGMemoryAddress alignedInstructionPointer = instructionPointer - (instructionPointer % 4);
-				NSUInteger numberOfNoppedInstructions = instructionPointer - alignedInstructionPointer;
-				
-				// clever way of @"nop" * numberOfNoppedInstructions, if it existed
-				NSString *nopLine = @"nop\n";
-				NSString *nopsString = [@"" stringByPaddingToLength:numberOfNoppedInstructions * nopLine.length withString:nopLine startingAtIndex:0];
-				
-				NSData *inputData = [[NSString stringWithFormat:@"BITS %lu\norg %llu\n%@%@\n", ZG_PROCESS_POINTER_SIZE_BITS(processType), alignedInstructionPointer, nopsString, instructionText] dataUsingEncoding:NSUTF8StringEncoding];
-				
-				[[inputPipe fileHandleForWriting] writeData:inputData];
-				[[inputPipe fileHandleForWriting] closeFile];
-				
-				[task waitUntilExit];
-				
-				if ([task terminationStatus] == EXIT_SUCCESS)
-				{
-					NSData *tempData = [NSData dataWithContentsOfFile:outputFilePath];
-					
-					if (tempData.length <= numberOfNoppedInstructions)
-					{
-						if (error != nil)
-						{
-							*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : ZGLocalizedStringFromDebuggerTable(@"failedAssembleWithZeroBytes")}];
-						}
-					}
-					else
-					{
-						data = [NSData dataWithBytes:(const uint8_t *)tempData.bytes + numberOfNoppedInstructions length:tempData.length - numberOfNoppedInstructions];
-					}
-				}
-				else
-				{
-					NSData *errorData = [[errorPipe fileHandleForReading] readDataToEndOfFile];
-					if (errorData != nil && error != nil)
-					{
-						NSString *errorString = [[[[NSString alloc] initWithData:errorData encoding:NSUTF8StringEncoding] componentsSeparatedByString:@"\n"] objectAtIndex:0];
-						*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : errorString}];
-					}
-				}
-				
-				if ([fileManager fileExistsAtPath:outputFilePath])
-				{
-					[fileManager removeItemAtPath:outputFilePath error:NULL];
-				}
-			}
+			*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : [NSString stringWithFormat:ZGLocalizedStringFromDebuggerTable(@"failedAssembleWithStartingEngine"), openResult]}];
 		}
-		else if (error != nil)
-		{
-			*error = [NSError errorWithDomain:ASSEMBLER_ERROR_DOMAIN code:kCFStreamErrorDomainCustom userInfo:@{@"reason" : [NSString stringWithFormat:ZGLocalizedStringFromDebuggerTable(@"failedAssembleWithBadFileDescriptor"), tempFileNameCString]}];
-		}
-		
-		free(tempFileNameCString);
 	}
 	
 	return data;
