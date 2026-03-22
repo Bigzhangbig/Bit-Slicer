@@ -37,7 +37,6 @@
 		7231440519C57A5300FBE342 /* ZGRegistersState.m in Sources */ = {isa = PBXBuildFile; fileRef = 7231440419C57A5300FBE342 /* ZGRegistersState.m */; };
 		7231440819C607C700FBE342 /* ZGWatchVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 7231440719C607C700FBE342 /* ZGWatchVariable.m */; };
 		7231440E19C6230F00FBE342 /* [Code] Watch Variable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 7231440C19C6230F00FBE342 /* [Code] Watch Variable.stringsdict */; };
-		7235B7A424D7BF980029580A /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7A324D7BF980029580A /* libudis86.a */; };
 		7235B7AF24D7CE0B0029580A /* ShortcutRecorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; };
 		7235B7B024D7CE180029580A /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7235B7B224D7D9B10029580A /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7B124D7D9B10029580A /* DDMathParser.framework */; };
@@ -101,10 +100,9 @@
 		72AA79831A23FDDF005A9BD6 /* ZGScriptPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = 72AA79821A23FDDF005A9BD6 /* ZGScriptPrompt.m */; };
 		72ABCBC524E8BA8200EF63A9 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 721594FD24DF36360027F600 /* HexFiend.framework */; };
 		72ABCBC624E8BA8900EF63A9 /* HexFiend.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 721594FD24DF36360027F600 /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		72ABCBE524E8CFF300EF63A9 /* ZGX86DisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */; };
 		72ABCBEA24E8D7D700EF63A9 /* Capstone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBE924E8D7D700EF63A9 /* Capstone.framework */; };
 		72ABCBEB24E8DA1800EF63A9 /* Capstone.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBE924E8D7D700EF63A9 /* Capstone.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		72ABCBEE24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */; };
+		72ABCBEE24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */; };
 		72ABCBF024E9DE9100EF63A9 /* libkeystone.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */; };
 		72ABCBF124E9DEA100EF63A9 /* libkeystone.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		72B5F56B2E92B89D0017B779 /* [Code] Notifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 72B5F5692E92B89D0017B779 /* [Code] Notifications.strings */; };
@@ -343,11 +341,6 @@
 		7231440619C607C700FBE342 /* ZGWatchVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGWatchVariable.h; path = "Bit Slicer/ZGWatchVariable.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7231440719C607C700FBE342 /* ZGWatchVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGWatchVariable.m; path = "Bit Slicer/ZGWatchVariable.m"; sourceTree = "<group>"; usesTabs = 1; };
 		7231440D19C6230F00FBE342 /* en */ = {isa = PBXFileReference; lastKnownFileType = text; name = en; path = "Bit Slicer/en.lproj/[Code] Watch Variable.stringsdict"; sourceTree = "<group>"; };
-		7235B79F24D7BF650029580A /* udis86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = udis86.h; path = deps/udis86/udis86/udis86.h; sourceTree = "<group>"; };
-		7235B7A024D7BF770029580A /* extern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = extern.h; path = deps/udis86/udis86/libudis86/extern.h; sourceTree = "<group>"; };
-		7235B7A124D7BF770029580A /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = deps/udis86/udis86/libudis86/types.h; sourceTree = "<group>"; };
-		7235B7A224D7BF770029580A /* itab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = itab.h; path = deps/udis86/udis86/libudis86/itab.h; sourceTree = "<group>"; };
-		7235B7A324D7BF980029580A /* libudis86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libudis86.a; path = deps/udis86/udis86/libudis86.a; sourceTree = "<group>"; };
 		7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ShortcutRecorder.framework; path = deps/ShortcutRecorder/ShortcutRecorder.framework; sourceTree = "<group>"; };
 		7235B7B124D7D9B10029580A /* DDMathParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DDMathParser.framework; path = deps/DDMathParser/DDMathParser.framework; sourceTree = "<group>"; };
 		7235B7B724D7DD8C0029580A /* pythonlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pythonlib.h; path = "Bit Slicer/pythonlib.h"; sourceTree = "<group>"; };
@@ -462,12 +455,10 @@
 		72AA79811A23FDDF005A9BD6 /* ZGScriptPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGScriptPrompt.h; path = "Bit Slicer/ZGScriptPrompt.h"; sourceTree = "<group>"; usesTabs = 1; };
 		72AA79821A23FDDF005A9BD6 /* ZGScriptPrompt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGScriptPrompt.m; path = "Bit Slicer/ZGScriptPrompt.m"; sourceTree = "<group>"; usesTabs = 1; };
 		72AA79841A2413B4005A9BD6 /* ZGScriptPromptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGScriptPromptDelegate.h; path = "Bit Slicer/ZGScriptPromptDelegate.h"; sourceTree = "<group>"; usesTabs = 1; };
-		72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGX86DisassemblerObject.m; path = "Bit Slicer/ZGX86DisassemblerObject.m"; sourceTree = "<group>"; };
-		72ABCBE624E8D00E00EF63A9 /* ZGX86DisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGX86DisassemblerObject.h; path = "Bit Slicer/ZGX86DisassemblerObject.h"; sourceTree = "<group>"; };
 		72ABCBE724E8D0B900EF63A9 /* ZGDisassemblerObjectProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGDisassemblerObjectProtocol.h; path = "Bit Slicer/ZGDisassemblerObjectProtocol.h"; sourceTree = "<group>"; };
 		72ABCBE924E8D7D700EF63A9 /* Capstone.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Capstone.framework; path = deps/capstone/Capstone.framework; sourceTree = "<group>"; };
-		72ABCBEC24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGARM64DisassemblerObject.h; path = "Bit Slicer/ZGARM64DisassemblerObject.h"; sourceTree = "<group>"; };
-		72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGARM64DisassemblerObject.m; path = "Bit Slicer/ZGARM64DisassemblerObject.m"; sourceTree = "<group>"; };
+		72ABCBEC24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGCapstoneDisassemblerObject.h; path = "Bit Slicer/ZGCapstoneDisassemblerObject.h"; sourceTree = "<group>"; };
+		72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGCapstoneDisassemblerObject.m; path = "Bit Slicer/ZGCapstoneDisassemblerObject.m"; sourceTree = "<group>"; };
 		72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libkeystone.0.dylib; path = deps/keystone/libkeystone.0.dylib; sourceTree = "<group>"; };
 		72ABCBF524E9DF4A00EF63A9 /* hexagon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hexagon.h; path = deps/keystone/keystone/hexagon.h; sourceTree = "<group>"; };
 		72ABCBF624E9DF4A00EF63A9 /* keystone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keystone.h; path = deps/keystone/keystone/keystone.h; sourceTree = "<group>"; };
@@ -794,7 +785,6 @@
 				7235B7B224D7D9B10029580A /* DDMathParser.framework in Frameworks */,
 				721594FE24DF36360027F600 /* HexFiend.framework in Frameworks */,
 				72ABCBEA24E8D7D700EF63A9 /* Capstone.framework in Frameworks */,
-				7235B7A424D7BF980029580A /* libudis86.a in Frameworks */,
 				7278DC041E4A967700C37150 /* Sparkle.framework in Frameworks */,
 				7235B7AF24D7CE0B0029580A /* ShortcutRecorder.framework in Frameworks */,
 				773E8B021821DDAD00D1A71A /* CoreSymbolication.framework in Frameworks */,
@@ -905,18 +895,6 @@
 				72E07FDA2AA563AF00BBEED1 /* LEB128Type.m */,
 			);
 			name = "Data Inspector";
-			sourceTree = "<group>";
-		};
-		7235B79E24D7BE9C0029580A /* udis86 */ = {
-			isa = PBXGroup;
-			children = (
-				7235B7A324D7BF980029580A /* libudis86.a */,
-				7235B79F24D7BF650029580A /* udis86.h */,
-				7235B7A024D7BF770029580A /* extern.h */,
-				7235B7A224D7BF770029580A /* itab.h */,
-				7235B7A124D7BF770029580A /* types.h */,
-			);
-			name = udis86;
 			sourceTree = "<group>";
 		};
 		72ABCBF424E9DF3E00EF63A9 /* keystone */ = {
@@ -1089,7 +1067,6 @@
 				72ABCBF424E9DF3E00EF63A9 /* keystone */,
 				773E8B0B1821E01700D1A71A /* Symbolication */,
 				7701EF411696A29100877373 /* mach_exc */,
-				7235B79E24D7BE9C0029580A /* udis86 */,
 				77F1163E17D2EF9E009E002A /* ZGDebuggerController.h */,
 				77F1163F17D2EF9E009E002A /* ZGDebuggerController.m */,
 				779C6CC118E7309B0076D647 /* ZGDebuggerUtilities.h */,
@@ -1105,10 +1082,8 @@
 				72ABCBE724E8D0B900EF63A9 /* ZGDisassemblerObjectProtocol.h */,
 				77F1164117D2EFB4009E002A /* ZGDisassemblerObject.h */,
 				77F1164217D2EFB4009E002A /* ZGDisassemblerObject.m */,
-				72ABCBE624E8D00E00EF63A9 /* ZGX86DisassemblerObject.h */,
-				72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */,
-				72ABCBEC24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.h */,
-				72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */,
+				72ABCBEC24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.h */,
+				72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */,
 				77F1164417D2EFBD009E002A /* ZGInstruction.h */,
 				77F1164517D2EFBD009E002A /* ZGInstruction.m */,
 				770F283B18827D1B001B828C /* ZGBreakPointConditionViewController.h */,
@@ -1654,7 +1629,7 @@
 				77F115EE17D2EDEE009E002A /* ZGRunningProcessObserver.m in Sources */,
 				77F115F117D2EDF9009E002A /* ZGDocument.m in Sources */,
 				72DBC8D51B71A4BB0092ED75 /* ZGRootlessConfiguration.m in Sources */,
-				72ABCBEE24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m in Sources */,
+				72ABCBEE24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m in Sources */,
 				72D72BCB1AB3E9FA005044CF /* ZGLocalization.m in Sources */,
 				77F115F417D2EE0B009E002A /* ZGDocumentData.m in Sources */,
 				720844FD24E072DB00F3D449 /* DataInspectorScrollView.m in Sources */,
@@ -1730,7 +1705,6 @@
 				77F1165017D2EFE4009E002A /* ZGDebugThread.m in Sources */,
 				77E9DBCE181F812E009F4982 /* ZGMachBinary.m in Sources */,
 				7257EFF31B87EF220045991F /* OSCSingleThreadQueue.m in Sources */,
-				72ABCBE524E8CFF300EF63A9 /* ZGX86DisassemblerObject.m in Sources */,
 				77F1165917D2F001009E002A /* ZGRegister.m in Sources */,
 				774B5EE61915361400D7AA69 /* ZGPyKeyCodeModule.m in Sources */,
 				7231440819C607C700FBE342 /* ZGWatchVariable.m in Sources */,

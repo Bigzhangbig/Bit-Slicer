@@ -31,22 +31,25 @@
  */
 
 #import "ZGDisassemblerObject.h"
-#import "ZGX86DisassemblerObject.h"
-#import "ZGARM64DisassemblerObject.h"
+#import "ZGCapstoneDisassemblerObject.h"
 
 @implementation ZGDisassemblerObject
 
 + (id<ZGDisassemblerObject>)disassemblerObjectWithBytes:(const void *)bytes address:(ZGMemoryAddress)address size:(ZGMemorySize)size processType:(ZGProcessType)processType
 {
 	id<ZGDisassemblerObject> disassemblerObject;
+	BOOL isARM64;
 	if (ZG_PROCESS_TYPE_IS_X86_FAMILY(processType))
 	{
-		disassemblerObject = [[ZGX86DisassemblerObject alloc] initWithBytes:bytes address:address size:size pointerSize:ZG_PROCESS_POINTER_SIZE(processType)];
+		isARM64 = NO;
 	}
-	else if (ZG_PROCESS_TYPE_IS_ARM64(processType))
+	else
 	{
-		disassemblerObject = [[ZGARM64DisassemblerObject alloc] initWithBytes:bytes address:address size:size];
+		isARM64 = YES;
 	}
+	
+	disassemblerObject = [[ZGCapstoneDisassemblerObject alloc] initWithBytes:bytes address:address size:size pointerSize:ZG_PROCESS_POINTER_SIZE(processType) isARM64:isARM64];
+	
 	assert(disassemblerObject != nil);
 	
 	return disassemblerObject;
@@ -56,11 +59,11 @@
 {
 	if (ZG_PROCESS_TYPE_IS_X86_FAMILY(processType))
 	{
-		return [ZGX86DisassemblerObject isCallMnemonic:mnemonic];
+		return [ZGCapstoneDisassemblerObject isX86CallMnemonic:mnemonic];
 	}
 	else if (ZG_PROCESS_TYPE_IS_ARM64(processType))
 	{
-		return [ZGARM64DisassemblerObject isCallMnemonic:mnemonic];
+		return [ZGCapstoneDisassemblerObject isARM64CallMnemonic:mnemonic];
 	}
 	return NO;
 }
@@ -69,11 +72,11 @@
 {
 	if (ZG_PROCESS_TYPE_IS_X86_FAMILY(processType))
 	{
-		return [ZGX86DisassemblerObject isJumpMnemonic:mnemonic];
+		return [ZGCapstoneDisassemblerObject isX86JumpMnemonic:mnemonic];
 	}
 	else if (ZG_PROCESS_TYPE_IS_ARM64(processType))
 	{
-		return [ZGARM64DisassemblerObject isJumpMnemonic:mnemonic];
+		return [ZGCapstoneDisassemblerObject isARM64JumpMnemonic:mnemonic];
 	}
 	return NO;
 }
