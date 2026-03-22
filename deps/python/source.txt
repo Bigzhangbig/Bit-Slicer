@@ -1,32 +1,50 @@
-Source: https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tgz
+Source: https://www.python.org/ftp/python/3.14.3/Python-3.14.3.tgz
 
 Config:
 Check Mac/README.rst for info
 
-env MACOSX_DEPLOYMENT_TARGET=10.14.6 ./configure --enable-framework=/Users/msp/Desktop/python-install/ --enable-universalsdk --with-universal-archs=universal2 --enable-optimizations --with-lto
+Modify configure script to build for arm64e instead of x86_64:
 
-env MACOSX_DEPLOYMENT_TARGET=10.14.6 make
+universal2)
+               UNIVERSAL_ARCH_FLAGS="-arch arm64 -arch arm64e"
+               LIPO_32BIT_FLAGS=""
+               ARCH_RUN_32BIT="true"
+               ARCH_TRIPLES=`echo {aarch64}-apple-darwin`
+               ;;
+
+Find all references to "univeral2" and whereever you see x86_64/intel specifics, remove it, and add arm64e as needed.
+
+If we have zstd installed from homebrew:
+brew unlink zstd
+
+env MACOSX_DEPLOYMENT_TARGET=15.6 ./configure --enable-framework=/Users/msp/Desktop/python-install/ --enable-universalsdk --with-universal-archs=universal2 --enable-optimizations --with-lto --without-zstd
+
+env MACOSX_DEPLOYMENT_TARGET=15.6 make
 sudo make install # sudo is needed otherwise everything won't be installed, will install in /usr/local/bin/
+
+If we had zstd installed from homebrew before:
+brew link zstd
 
 Copy ~/Desktop/python-install/Python.framework/ to ~/Desktop/Python.framework/ for framework we will modify
 cd ~/Desktop/Python.framework/
 rm -rf Resources/Python.app
 rm -rf Resources/English.lproj
-unlink Versions/3.12/Headers
-rm -rf Versions/3.12/share
-mv Versions/3.12/include Versions/3.12/Headers
-~/Desktop/python-install/Python.framework/Versions/3.12/bin/python3 -m compileall ~/Python.framework/Versions/3.12/lib/python3.12 -b
-rm -rf Versions/3.12/bin/
-rm -rf Versions/3.12/lib/pkgconfig/
-rm -rf Versions/3.12/lib/libpython3.12.dylib
-find Versions/3.12/lib/python3.12  -name "*\.py" -delete
-Remove all __pycache__ directories in Versions/3.12/lib/python3.12
+unlink Versions/3.14/Headers
+rm -rf Versions/3.14/share
+mv Versions/3.14/include/python3.14/ Versions/3.14/Headers/
+rm -rf Versions/3.14/include
+~/Desktop/python-install/Python.framework/Versions/3.14/bin/python3.14 -m compileall ~/Desktop/Python.framework/Versions/3.14/lib/python3.14 -b
+rm -rf Versions/3.14/bin/
+rm -rf Versions/3.14/lib/pkgconfig/
+rm -rf Versions/3.14/lib/libpython3.14.dylib
+find Versions/3.14/lib/python3.14  -name "*\.py" -delete
+Remove all __pycache__ directories in Versions/3.14/lib/python3.14
 
-cd Versions/3.12/lib/python3.12
+cd Versions/3.14/lib/python3.14
 rm -rf __phello__
 rm antigravity.pyc
 rm cgi.pyc
-rm -rf config-3.12-darwin
+rm -rf config-3.14-darwin
 rm -rf ctypes/test/
 rm -rf curses
 rm -rf distutils
@@ -49,25 +67,30 @@ rm -rf venv
 rm -rf lib2to3
 rm -rf idle lib
 
-cd lib-dynload
-rm _curses_panel.cpython-312-darwin.so
-rm _curses.cpython-312-darwin.so
-
 rm __hello__.pyc
+
+cd lib-dynload
+rm _curses_panel.cpython-314-darwin.so
+rm _curses.cpython-314-darwin.so
 
 cd ~/Desktop/Python.framework/
 rm Headers
 
-mv Versions/Current/lib/python3.12 Versions/Current/Resources/python3.12
+mv Versions/Current/lib/python3.14 Versions/Current/Resources/python3.14
 rm -rf Versions/Current/lib
 
-mv Versions/Current/lib/python3.12/lib-dynload/ Versions/Current/Frameworks
-mv Versions/3.12/ Versions/A
-install_name_tool -id "@rpath/Python.framework/Versions/A/Python" Versions/Current/Python
+mv Versions/Current/Resources/python3.14/lib-dynload Versions/Current/Frameworks
+mv Versions/3.14/ Versions/A
 
 cd Versions
 rm Current
 ln -s A Current
+
+ln -s Versions/Current/Headers
+mv Versions/A/Resources/python3.14 Versions/A/Resources/python 
+
+cd ~/Desktop/Python.framework/
+install_name_tool -id "@rpath/Python.framework/Versions/A/Python" Versions/Current/Python
 
 cd ~/Desktop
 codesign --deep -f -s "-" Python.framework
