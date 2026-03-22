@@ -1,5 +1,5 @@
 ---
-triple:          'arm64-apple-darwin'
+triple:          'arm64e-apple-darwin'
 binary-path:     '/Users/msp/Library/Developer/Xcode/DerivedData/DDMathParser-ekhfudluanvtuzhkfbwspmkzsltd/Build/Products/Release/DDMathParser.framework/Versions/A/DDMathParser'
 relocations:     []
 ...
