@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/.DS_Store</key>
 		<data>
-		0yiaIHX70GP5IFhGVOcquASw8dw=
+		0+gdPsxs7La+Tl/OKciNCmmtpEo=
 		</data>
 		<key>Resources/Base.lproj/Sparkle.strings</key>
 		<data>
@@ -14,7 +14,7 @@
 		</data>
 		<key>Resources/Info.plist</key>
 		<data>
-		OEaXBvxP1yfm2dLql4zhFAX6Hc0=
+		cl+FmcDFT+9aYxFQfeT8m2HmDSU=
 		</data>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
 		<data>
@@ -26,11 +26,11 @@
 		</data>
 		<key>Resources/SUUpdateAlert.nib</key>
 		<data>
-		6M789C1QB9aMJ8C+60BqTx4LYfo=
+		ucWnZ0z2d1pgxDZMKAe2/hrNtoM=
 		</data>
 		<key>Resources/SUUpdatePermissionPrompt.nib</key>
 		<data>
-		9gl0bDWTU2acybnF4GiqxaGMXjk=
+		1U4U2M4joiiPwcgcWpeEMCfFWNs=
 		</data>
 		<key>Resources/es.lproj/Sparkle.strings</key>
 		<dict>
@@ -57,10 +57,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			Tyikk9Dh2MjjcuPYer0RVO3d6Tc=
+			BJJ/b6vdi0JWMHCt3gE/JRc52Vw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"4f28a493d0e1d8c8e372e3d87abd1154eddde937" or cdhash H"a4977096196bf54f28583088a37ad63a07fddcea"</string>
+			<string>cdhash H"04927f6fabdd8b42563070adde013f251739d95c" or cdhash H"ce1f3bf88767b3e4d23bbf5e6abb2e4ed8aac3d7"</string>
 		</dict>
 		<key>Headers/SPUAppcastSigningValidationStatus.h</key>
 		<dict>
@@ -297,7 +297,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			d/3fqBi6LwzyupXsX88YxXihagdSQl8qcmXZ3KbvM64=
+			6DUfsyaht11P//wu+WzUsRHTFQ0Rptk1NQMVXyL6UdY=
 			</data>
 		</dict>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
@@ -318,14 +318,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			OYejM9p8JyjvLLllbl7q8IMohIc8q/eDU/y5CZxdj74=
+			/9vVUXrI8mtSYYJWBg2bjrEiO54FNPSrypF8v7FvNaY=
 			</data>
 		</dict>
 		<key>Resources/SUUpdatePermissionPrompt.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZLdS8WMscZ0plHRscWctC2AwdsAmglbv+17c5rb8viM=
+			fKK/5uHM8HLI5odZoZYxTdQcbJnXdZRZma6+zOp3eA8=
 			</data>
 		</dict>
 		<key>Resources/es.lproj/Sparkle.strings</key>
@@ -350,10 +350,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			V+Mma02nFdCdZmF5DNzVnGwE+bw=
+			0sMOUmvwec0JMI7z+ZPelR13wDo=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"57e3266b4da715d09d6661790cdcd59c6c04f9bc" or cdhash H"45edb0e8efcba1ccabded7e0d2fc5f104253b330"</string>
+			<string>cdhash H"d2c30e526bf079cd09308ef3f993de951d77c03a" or cdhash H"e7290df5e1af8ed99ff21fe450fd876e91c9dc98"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

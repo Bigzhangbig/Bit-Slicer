@@ -1,6 +1,6 @@
 Source: https://github.com/sparkle-project/Sparkle
 Branch: 2.x
-Commit: 829fa4c3
+Commit: 066e75a8
 
 Instructions:
 In ConfigCommon.xcconfig set deployment target and disable:
@@ -10,5 +10,6 @@ SPARKLE_BUILD_LEGACY_SUUPDATER
 SPARKLE_BUILD_LEGACY_DSA_SUPPORT (and remove -DSPARKLE_BUILD_LEGACY_DSA_SUPPORT)
 SPARKLE_BUILD_BZIP2_DELTA_SUPPORT
 SPARKLE_BUILD_PACKAGE_SUPPORT (and remove -DSPARKLE_BUILD_PACKAGE_SUPPORT)
-Bump MACOSX_DEPLOYMENT_TARGET to 11.5
+Bump MACOSX_DEPLOYMENT_TARGET to 15.6
+Set ARCHS to arm64 arm64e
 Remove unused localizations and re-sign Sparkle.
