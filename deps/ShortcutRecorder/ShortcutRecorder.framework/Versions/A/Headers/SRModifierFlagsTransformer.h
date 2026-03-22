@@ -5,9 +5,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverriding-method-mismatch"
-
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,13 +32,6 @@ NS_SWIFT_UNAVAILABLE("use SRLiteralModifierFlagsTransformer / SRSymbolicModifier
 @end
 
 
-@interface SRModifierFlagsTransformer (Deprecated)
-+ (SRLiteralModifierFlagsTransformer *)sharedPlainTransformer __attribute__((deprecated("", "SRLiteralModifierFlagsTransformer.shared")));
-- (instancetype)initWithPlainStrings:(BOOL)aUsesPlainStrings __attribute__((deprecated));
-@property (readonly) BOOL usesPlainStrings __attribute__((deprecated));
-@end
-
-
 /*!
  Transform modifier flags into a univesal symbolic string such as ⌘⌥.
 
@@ -60,5 +50,3 @@ NS_SWIFT_NAME(SymbolicModifierFlagsTransformer)
 @end
 
 NS_ASSUME_NONNULL_END
-
-#pragma clang diagnostic pop

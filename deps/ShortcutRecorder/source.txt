@@ -1,4 +1,4 @@
 Source: https://github.com/Kentzo/ShortcutRecorder.git
 Branch: master
-Commit: 133dd8ec8dc780abd0ccdba1309ea35f7784a439
-Config: Change scheme to build for Release
+Commit: c86ce0f9be5353ba998966121c7631602a9a36f7
+Config: Change scheme to build for Release, arm64 arm64e only. Change deployment target to 15.6.

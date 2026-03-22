@@ -9,9 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-messaging-id"
-
 /*!
  @enum SRShortcutKey
 
@@ -39,10 +36,6 @@ extern SRShortcutKey const SRShortcutKeyCharacters;
  */
 extern SRShortcutKey const SRShortcutKeyCharactersIgnoringModifiers;
 
-extern NSString *const SRShortcutKeyCode __attribute__((deprecated("Deprecated in 3.0", "SRShortcutKeyKeyCode")));
-extern NSString *const SRShortcutModifierFlagsKey __attribute__((deprecated("Deprecated in 3.0", "SRShortcutKeyModifierFlags")));
-extern NSString *const SRShortcutCharacters __attribute__((deprecated("Deprecated in 3.0", "SRShortcutKeyCharacters")));
-extern NSString *const SRShortcutCharactersIgnoringModifiers __attribute__((deprecated("", "SRShortcutKeyCharactersIgnoringModifiers")));
 
 /*!
  Combination of a key code, modifier flags and optionally their characters
@@ -65,8 +58,22 @@ NS_SWIFT_NAME(Shortcut)
 
 /*!
  Initialize the shortcut with a keyboard event.
+
+ @seealso SRShortcut/shortcutWithEvent:ignoringCharacters:
  */
 + (nullable instancetype)shortcutWithEvent:(NSEvent *)aKeyboardEvent;
+
+/*!
+ Initialize the shortcut with a keyboard event without wasting resources to generate characters.
+
+ @discussion
+ AppKit generates characters upon first request which is a waste of resources
+ when you know exactly that they are not needed, e.g. when used together with SRShortcutAction.
+
+ In addition, AppKit currently throws an exception if the characters property is accessed
+ outside of the main thread.
+ */
++ (nullable instancetype)shortcutWithEvent:(NSEvent *)aKeyboardEvent ignoringCharacters:(BOOL)aShouldIgnoreCharacters;
 
 /*!
  Initialize the shortcut with a dictionary.
@@ -127,8 +134,17 @@ NS_SWIFT_NAME(Shortcut)
  Representation of the key code with modifier flags.
 
  @discussion
- Depends on system's locale and the active input source at the time when shortcut was taken.
- Does not participate in the equality test.
+ Returned value depends on system's locale and the active input source
+ at the time when the shortcut was initialized:
+
+ - A non-empty string that was either specified by the user or recovered from keyCode and modifierFlags
+
+ - An empty string that was either specified by the user or if keyCode equals SRKeyCodeNone
+
+ - nil if it was impossible to recover charaters for keyCode and modifierFlags with system's locale
+   and active input source
+
+ @note Does not participate in the equality test.
  */
 @property (nullable, readonly) NSString *characters;
 
@@ -136,8 +152,17 @@ NS_SWIFT_NAME(Shortcut)
  Representation of the key code without modifier flags.
 
  @discussion
- Depends on system's locale and the active input source at the time when shortcut was taken.
- Does not participate in the equality test.
+ Returned value depends on system's locale and the active input source
+ at the time when the shortcut was initialized:
+
+ - A non-empty string that was either specified by the user or recovered from the keyCode and modifierFlags
+
+ - An empty string that was either specified by the user or if keyCode equals SRKeyCodeNone
+
+ - nil if it was impossible to recover charaters for keyCode and modifierFlags with system's locale
+   and active input source
+
+ @note Does not participate in the equality test.
  */
 @property (nullable, readonly) NSString *charactersIgnoringModifiers;
 
@@ -205,60 +230,5 @@ NS_SWIFT_NAME(Shortcut)
 @property (readonly) UInt32 carbonModifierFlags;
 
 @end
-
-
-/*!
- Check whether dictionary representations of shortcuts are equal (ShortcutRecorder 2).
- */
-NS_INLINE BOOL SRShortcutEqualToShortcut(NSDictionary *a, NSDictionary *b) __attribute__((deprecated("Deprecated in 3.0", "SRShortcut/isEqual:")));
-NS_INLINE BOOL SRShortcutEqualToShortcut(NSDictionary *a, NSDictionary *b)
-{
-    if (a == b)
-        return YES;
-    else if (a && !b)
-        return NO;
-    else if (!a && b)
-        return NO;
-    else
-        return ([a[SRShortcutKeyKeyCode] isEqual:b[SRShortcutKeyKeyCode]] && [a[SRShortcutKeyModifierFlags] isEqual:b[SRShortcutKeyModifierFlags]]);
-}
-
-/*!
- Create ShortcutRecorder 2 shortcut.
- */
-NS_INLINE NSDictionary *SRShortcutWithCocoaModifierFlagsAndKeyCode(NSEventModifierFlags aModifierFlags, SRKeyCode aKeyCode) __attribute__((deprecated("Deprecated in 3.0", "SRShortcut")));
-NS_INLINE NSDictionary *SRShortcutWithCocoaModifierFlagsAndKeyCode(NSEventModifierFlags aModifierFlags, SRKeyCode aKeyCode)
-{
-    return @{SRShortcutKeyKeyCode: @(aKeyCode), SRShortcutKeyModifierFlags: @(aModifierFlags)};
-}
-
-
-/*!
- Return string representation of a shortcut with modifier flags replaced with their
- localized readable equivalents (e.g. ⌥ -> Option).
- */
-NSString * _Nonnull SRReadableStringForCocoaModifierFlagsAndKeyCode(NSEventModifierFlags aModifierFlags, SRKeyCode aKeyCode) __attribute__((deprecated("Deprecated in 3.0", "SRShortcut/readableStringRepresentation:")));
-
-
-/*!
- Return string representation of a shortcut with modifier flags replaced with their
- localized readable equivalents (e.g. ⌥ -> Option) and ASCII character with a key code.
- */
-NSString * _Nonnull SRReadableASCIIStringForCocoaModifierFlagsAndKeyCode(NSEventModifierFlags aModifierFlags, SRKeyCode aKeyCode) __attribute__((deprecated("Deprecated in 3.0", "SRShortcut/readableStringRepresentation:")));
-
-
-/*!
- Check whether a given key code with modifier flags is equal to a key equivalent and key equivalent modifier flags
- (e.g. from NSButton or NSMenuItem).
-
- @discussion
- On macOS some key combinations can have "alternates". E.g. option-A can be represented both as "option-A" and "å".
- */
-BOOL SRKeyCodeWithFlagsEqualToKeyEquivalentWithFlags(SRKeyCode aKeyCode,
-                                                     NSEventModifierFlags aKeyCodeFlags,
-                                                     NSString * _Nullable aKeyEquivalent,
-                                                     NSEventModifierFlags aKeyEquivalentModifierFlags) __attribute__((deprecated("Deprecated in 3.0", "SRShortcut/isEqualToKeyEquivalent:withModifierFlags:")));
-
-#pragma clang diagnostic pop
 
 NS_ASSUME_NONNULL_END

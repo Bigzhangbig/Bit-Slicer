@@ -6,8 +6,6 @@
 #import <Foundation/Foundation.h>
 #import <ShortcutRecorder/SRShortcut.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverriding-method-mismatch"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,5 +26,3 @@ NS_SWIFT_NAME(KeyEquivalentTransformer)
 @end
 
 NS_ASSUME_NONNULL_END
-
-#pragma clang diagnostic pop
