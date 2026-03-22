@@ -315,7 +315,6 @@
 		72130FF92BF00FB300691AED /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "Bit Slicer/es.lproj/[Code] Edit Variable Address.strings"; sourceTree = "<group>"; };
 		72130FFA2BF00FBD00691AED /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "Bit Slicer/ru.lproj/[Code] Edit Variable Address.strings"; sourceTree = "<group>"; };
 		721594FD24DF36360027F600 /* HexFiend.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexFiend.framework; path = deps/HexFiend/HexFiend.framework; sourceTree = "<group>"; };
-		721594FF24DF36460027F600 /* HFLineCountingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = deps/HexFiend/HFLineCountingView.h; sourceTree = "<group>"; };
 		722CAADE19BB625E009C6AAE /* VariableDisplayTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VariableDisplayTest.m; sourceTree = "<group>"; usesTabs = 1; };
 		722CAAE019BBB5A1009C6AAE /* SearchVirtualMemoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVirtualMemoryTest.m; sourceTree = "<group>"; usesTabs = 1; };
 		722EE74D1B18D8B000934EF3 /* ZGChosenProcessDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGChosenProcessDelegate.h; path = "Bit Slicer/ZGChosenProcessDelegate.h"; sourceTree = "<group>"; };
@@ -1175,7 +1174,6 @@
 				77F115D217D2ED82009E002A /* ZGStatusBarRepresenter.m */,
 				77F115D417D2ED8E009E002A /* ZGLineCountingRepresenter.h */,
 				77F115D517D2ED8E009E002A /* ZGLineCountingRepresenter.m */,
-				721594FF24DF36460027F600 /* HFLineCountingView.h */,
 				77F115D717D2ED9D009E002A /* ZGLineCountingView.h */,
 				77F115D817D2ED9D009E002A /* ZGLineCountingView.m */,
 			);

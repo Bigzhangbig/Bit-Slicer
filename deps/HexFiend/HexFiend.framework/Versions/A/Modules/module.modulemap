@@ -4,8 +4,3 @@ framework module HexFiend {
 
   module * { export * }
 }
-
-module HexFiend.Swift {
-  header "HexFiend-Swift.h"
-  requires objc
-}
