@@ -67,9 +67,16 @@ bool ZGGetExceptionThreadState(zg_exception_state_t *exceptionState, thread_act_
 #endif
 
 ZGMemoryAddress ZGInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, ZGProcessType type);
-void ZGSetInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, ZGMemoryAddress instructionAddress, ZGProcessType type);
+bool ZGSetInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress, ZGProcessType type);
 
 ZGMemoryAddress ZGBasePointerFromGeneralThreadState(zg_thread_state_t *threadState, ZGProcessType type);
+bool ZGSetBasePointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress);
+
+ZGMemoryAddress ZGLinkRegisterFromGeneralThreadState(zg_thread_state_t *threadState);
+bool ZGSetLinkRegisterFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress);
+
+ZGMemoryAddress ZGStackPointerFromGeneralThreadState(zg_thread_state_t *threadState);
+bool ZGSetStackPointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress);
 
 bool ZGGetDebugThreadState(zg_debug_state_t *debugState, thread_act_t thread, mach_msg_type_number_t *stateCount);
 bool ZGSetDebugThreadState(zg_debug_state_t *debugState, thread_act_t thread, mach_msg_type_number_t stateCount);

@@ -31,6 +31,8 @@
  */
 
 #include "ZGThreadStates.h"
+#include <sys/sysctl.h>
+#import <Foundation/Foundation.h>
 
 #if TARGET_CPU_ARM64
 typedef arm_neon_state64_t zg_float_state_t;
@@ -78,22 +80,97 @@ bool ZGGetExceptionThreadState(zg_exception_state_t *exceptionState, thread_act_
 }
 #endif
 
+// See lldb as a reference for logic pertaining to dealing with PAC and signing pointers
+#if __has_feature(ptrauth_calls)
+static bool ZGGetMaxAddressingBits(uint32_t *maxAddressingBits)
+{
+	static uint32_t gMaxAddressingBits = 0;
+	
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		size_t len = sizeof(uint32_t);
+		if (sysctlbyname("machdep.virtual_address_size", &gMaxAddressingBits, &len, NULL, 0) != 0)
+		{
+			gMaxAddressingBits = 0;
+		}
+	});
+	
+	*maxAddressingBits = gMaxAddressingBits;
+	return gMaxAddressingBits > 0;
+}
+
+static uint64_t ZGClearPACBits(uint64_t value)
+{
+	uint32_t maxAddressingBits = 0;
+	if (!ZGGetMaxAddressingBits(&maxAddressingBits))
+	{
+		return value;
+	}
+
+	uint64_t mask = ((1ULL << maxAddressingBits) - 1);
+	return value & mask; // high bits cleared to 0
+}
+
+#define SIGN_AND_SET_POINTER(setter, thread, threadState, instructionAddress) \
+do { \
+	zg_thread_state_t convertedThreadState; \
+	{ \
+		mach_msg_type_number_t convertedCount = ARM_THREAD_STATE64_COUNT; \
+		kern_return_t result = thread_convert_thread_state(thread, THREAD_CONVERT_THREAD_STATE_TO_SELF, ARM_THREAD_STATE64, (thread_state_t)threadState, ARM_THREAD_STATE64_COUNT, (thread_state_t)&convertedThreadState, &convertedCount); \
+		if (result != KERN_SUCCESS) \
+		{ \
+			return false; \
+		} \
+	} \
+	\
+	ZGMemoryAddress strippedInstructionAddress = (ZGMemoryAddress)ptrauth_strip((void *)instructionAddress, ptrauth_key_function_pointer); \
+	ZGMemoryAddress signedUnauthenticatedAddress = (ZGMemoryAddress)ptrauth_sign_unauthenticated((void *)strippedInstructionAddress, ptrauth_key_function_pointer, 0); \
+	\
+	setter(convertedThreadState, (void *)signedUnauthenticatedAddress); \
+	\
+	{ \
+		mach_msg_type_number_t finalCount = ARM_THREAD_STATE64_COUNT; \
+		kern_return_t result = thread_convert_thread_state(thread, THREAD_CONVERT_THREAD_STATE_FROM_SELF, ARM_THREAD_STATE64, (thread_state_t)&convertedThreadState, ARM_THREAD_STATE64_COUNT, (thread_state_t)threadState, &finalCount); \
+		if (result != KERN_SUCCESS) \
+		{ \
+			return false; \
+		} \
+	} \
+} while (0)
+
+#endif
+
 ZGMemoryAddress ZGInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, ZGProcessType type)
 {
 #if TARGET_CPU_ARM64
 	(void)type;
-	ZGMemoryAddress instructionPointer = arm_thread_state64_get_pc(*threadState);
+	ZGMemoryAddress instructionPointer;
+#if __has_feature(ptrauth_calls)
+	uint64_t unstrippedAddress = (uint64_t)(threadState->__opaque_pc);
+	instructionPointer = ZGClearPACBits((uint64_t)(unstrippedAddress));
+#else
+	instructionPointer = arm_thread_state64_get_pc(*threadState);
+#endif
+	
 #else
 	ZGMemoryAddress instructionPointer = (ZG_PROCESS_TYPE_IS_X86_64(type)) ? threadState->uts.ts64.__rip : threadState->uts.ts32.__eip;
 #endif
 	return instructionPointer;
 }
 
-void ZGSetInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, ZGMemoryAddress instructionAddress, ZGProcessType type)
+bool ZGSetInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress, ZGProcessType type)
 {
 #if TARGET_CPU_ARM64
 	(void)type;
-	arm_thread_state64_set_pc_fptr(*threadState, instructionAddress);
+	
+#if __has_feature(ptrauth_calls)
+	SIGN_AND_SET_POINTER(arm_thread_state64_set_pc_fptr, thread, threadState, instructionAddress);
+#else
+	(void)thread;
+	arm_thread_state64_set_pc_fptr(*threadState, (void *)instructionAddress);
+#endif
+	
+	return true;
 #else
 	if (ZG_PROCESS_TYPE_IS_X86_64(type))
 	{
@@ -103,6 +180,8 @@ void ZGSetInstructionPointerFromGeneralThreadState(zg_thread_state_t *threadStat
 	{
 		threadState->uts.ts32.__eip = (uint32_t)instructionAddress;
 	}
+	
+	return true;
 #endif
 }
 
@@ -110,12 +189,75 @@ ZGMemoryAddress ZGBasePointerFromGeneralThreadState(zg_thread_state_t *threadSta
 {
 #if TARGET_CPU_ARM64
 	(void)type;
-	ZGMemoryAddress framePointer = arm_thread_state64_get_fp(*threadState);
+	ZGMemoryAddress framePointer;
+#if __has_feature(ptrauth_calls)
+	framePointer = ZGClearPACBits((uint64_t)(threadState->__opaque_fp));
+#else
+	framePointer = arm_thread_state64_get_fp(*threadState);
+#endif
 	return framePointer;
 #else
 	ZGMemoryAddress basePointer = (ZG_PROCESS_TYPE_IS_X86_64(type)) ? threadState->uts.ts64.__rbp : threadState->uts.ts32.__ebp;
 	return basePointer;
 #endif
+}
+
+bool ZGSetBasePointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress)
+{
+#if __has_feature(ptrauth_calls)
+	SIGN_AND_SET_POINTER(arm_thread_state64_set_fp, thread, threadState, instructionAddress);
+#else
+	(void)thread;
+	arm_thread_state64_set_fp(*threadState, instructionAddress);
+#endif
+	
+	return true;
+}
+
+ZGMemoryAddress ZGLinkRegisterFromGeneralThreadState(zg_thread_state_t *threadState)
+{
+	ZGMemoryAddress linkRegister;
+#if __has_feature(ptrauth_calls)
+	linkRegister = ZGClearPACBits((uint64_t)(threadState->__opaque_lr));
+#else
+	linkRegister = arm_thread_state64_get_lr(*threadState);
+#endif
+	return linkRegister;
+}
+
+bool ZGSetLinkRegisterFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress)
+{
+#if __has_feature(ptrauth_calls)
+	SIGN_AND_SET_POINTER(arm_thread_state64_set_lr_fptr, thread, threadState, instructionAddress);
+#else
+	(void)thread;
+	arm_thread_state64_set_lr_fptr(*threadState, instructionAddress);
+#endif
+	
+	return true;
+}
+
+ZGMemoryAddress ZGStackPointerFromGeneralThreadState(zg_thread_state_t *threadState)
+{
+	ZGMemoryAddress stackPointer;
+#if __has_feature(ptrauth_calls)
+	stackPointer = ZGClearPACBits((uint64_t)(threadState->__opaque_sp));
+#else
+	stackPointer = arm_thread_state64_get_sp(*threadState);
+#endif
+	return stackPointer;
+}
+
+bool ZGSetStackPointerFromGeneralThreadState(zg_thread_state_t *threadState, thread_act_t thread, ZGMemoryAddress instructionAddress)
+{
+#if __has_feature(ptrauth_calls)
+	SIGN_AND_SET_POINTER(arm_thread_state64_set_sp, thread, threadState, instructionAddress);
+#else
+	(void)thread;
+	arm_thread_state64_set_sp(*threadState, instructionAddress);
+#endif
+	
+	return true;
 }
 
 bool ZGGetDebugThreadState(zg_debug_state_t *debugState, thread_act_t thread, mach_msg_type_number_t *stateCount)

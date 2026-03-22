@@ -149,7 +149,7 @@
 		773E8B021821DDAD00D1A71A /* CoreSymbolication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 773E8B011821DDAD00D1A71A /* CoreSymbolication.framework */; };
 		774B5EE61915361400D7AA69 /* ZGPyKeyCodeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 774B5EE51915361400D7AA69 /* ZGPyKeyCodeModule.m */; };
 		77607AB1185CD50100AC532B /* AGScopeBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 77607AB0185CD50100AC532B /* AGScopeBar.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-semicolon-before-method-body"; }; };
-		7768064018B96A64007F2CAF /* ZGThreadStates.c in Sources */ = {isa = PBXBuildFile; fileRef = 7768063E18B96A64007F2CAF /* ZGThreadStates.c */; };
+		7768064018B96A64007F2CAF /* ZGThreadStates.m in Sources */ = {isa = PBXBuildFile; fileRef = 7768063E18B96A64007F2CAF /* ZGThreadStates.m */; };
 		7768064318B9A36E007F2CAF /* ZGBacktrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 7768064218B9A36E007F2CAF /* ZGBacktrace.m */; };
 		776B62E319312648004BF4A0 /* random_data in Resources */ = {isa = PBXBuildFile; fileRef = 776B62E219312648004BF4A0 /* random_data */; };
 		776B62E6193126B7004BF4A0 /* ByteArraySearchTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 776B62E5193126B7004BF4A0 /* ByteArraySearchTest.mm */; };
@@ -627,7 +627,7 @@
 		77607AB0185CD50100AC532B /* AGScopeBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGScopeBar.m; path = deps/AGScopeBar.m; sourceTree = "<group>"; usesTabs = 1; };
 		7761651920D78EE400E4EF51 /* Bit Slicer Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bit Slicer Debug.entitlements"; path = "Bit Slicer/Bit Slicer Debug.entitlements"; sourceTree = "<group>"; };
 		7767CB5A20D62D1900C773F0 /* Bit Slicer Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bit Slicer Release.entitlements"; path = "Bit Slicer/Bit Slicer Release.entitlements"; sourceTree = "<group>"; };
-		7768063E18B96A64007F2CAF /* ZGThreadStates.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ZGThreadStates.c; path = "Bit Slicer/ZGThreadStates.c"; sourceTree = "<group>"; usesTabs = 1; };
+		7768063E18B96A64007F2CAF /* ZGThreadStates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGThreadStates.m; path = "Bit Slicer/ZGThreadStates.m"; sourceTree = "<group>"; usesTabs = 1; };
 		7768063F18B96A64007F2CAF /* ZGThreadStates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGThreadStates.h; path = "Bit Slicer/ZGThreadStates.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7768064118B9A36E007F2CAF /* ZGBacktrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGBacktrace.h; path = "Bit Slicer/ZGBacktrace.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7768064218B9A36E007F2CAF /* ZGBacktrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGBacktrace.m; path = "Bit Slicer/ZGBacktrace.m"; sourceTree = "<group>"; usesTabs = 1; };
@@ -1308,7 +1308,7 @@
 				7789C379189A570F00F1FDAF /* ZGMachBinaryInfo.h */,
 				7789C37A189A570F00F1FDAF /* ZGMachBinaryInfo.m */,
 				7768063F18B96A64007F2CAF /* ZGThreadStates.h */,
-				7768063E18B96A64007F2CAF /* ZGThreadStates.c */,
+				7768063E18B96A64007F2CAF /* ZGThreadStates.m */,
 			);
 			name = "Virtual Memory";
 			sourceTree = "<group>";
@@ -1445,6 +1445,7 @@
 						TestTargetID = 8D15AC270486D014006FF6A4;
 					};
 					8D15AC270486D014006FF6A4 = {
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -1620,7 +1621,7 @@
 				77607AB1185CD50100AC532B /* AGScopeBar.m in Sources */,
 				77F115E217D2EDC3009E002A /* ZGAppController.m in Sources */,
 				726B7CA91A23F0EE004354BC /* ZGScriptPromptWindowController.m in Sources */,
-				7768064018B96A64007F2CAF /* ZGThreadStates.c in Sources */,
+				7768064018B96A64007F2CAF /* ZGThreadStates.m in Sources */,
 				77F115E517D2EDCD009E002A /* ZGPreferencesController.m in Sources */,
 				77F115E817D2EDD9009E002A /* ZGProcessList.m in Sources */,
 				77F115EB17D2EDE3009E002A /* ZGRunningProcess.m in Sources */,
@@ -2509,6 +2510,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = bitslicericon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2538,8 +2543,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Bit Slicer/Bit Slicer Debug.entitlements";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2583,13 +2590,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/deps/udis86/udis86",
 					"$(PROJECT_DIR)/deps/keystone",
 				);
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zgcoder.BitSlicer;
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -2623,6 +2630,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = bitslicericon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2652,11 +2663,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Bit Slicer/Bit Slicer Release.entitlements";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = ZCK58M894E;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2698,12 +2709,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/deps/udis86/udis86",
 					"$(PROJECT_DIR)/deps/keystone",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zgcoder.BitSlicer;
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				WARNING_CFLAGS = (
 					"-Weverything",

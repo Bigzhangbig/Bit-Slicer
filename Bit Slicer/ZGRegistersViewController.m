@@ -239,89 +239,18 @@
 	
 	zg_vector_state_t vectorState;
 	mach_msg_type_number_t vectorStateCount;
-	if (!ZGGetVectorThreadState(&vectorState, _breakPoint.thread, &vectorStateCount, processType, NULL))
+	thread_act_t thread = _breakPoint.thread;
+	if (!ZGGetVectorThreadState(&vectorState, thread, &vectorStateCount, processType, NULL))
 	{
 		return NO;
 	}
 	
 	NSString *registerName = theRegister.variable.name;
 	
-#if TARGET_CPU_ARM64
-	NSArray<NSString *> *vectorRegisters = @[@"v0", @"v1", @"v2", @"v3", @"v4", @"v5", @"v6", @"v7", @"v8", @"v9", @"v10", @"v11", @"v12", @"v13", @"v14", @"v15", @"v16", @"v17", @"v18", @"v19", @"v20", @"v21", @"v22", @"v23", @"v24", @"v25", @"v26", @"v27", @"v28", @"v29", @"v30", @"v31"];
-	
-	if ([vectorRegisters containsObject:registerName])
-	{
-		memcpy((uint64_t *)&vectorState.__v + [vectorRegisters indexOfObject:registerName], newVariable.rawValue, MIN(newVariable.size, sizeof(*vectorState.__v)));
-	}
-	else if ([registerName isEqualToString:@"fpsr"])
-	{
-		memcpy((uint64_t *)&vectorState.__fpsr, newVariable.rawValue, MIN(newVariable.size, sizeof(vectorState.__fpsr)));
-	}
-	else if ([registerName isEqualToString:@"fpcr"])
-	{
-		memcpy((uint64_t *)&vectorState.__fpcr, newVariable.rawValue, MIN(newVariable.size, sizeof(vectorState.__fpcr)));
-	}
-	else
+	if (![ZGRegisterEntries changeVectorThreadState:&vectorState thread:thread registerName:registerName value:(const void *)newVariable.rawValue size:newVariable.size])
 	{
 		return NO;
 	}
-#else
-	if ([registerName isEqualToString:@"fcw"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, fcw);
-	}
-	else if ([registerName isEqualToString:@"fsw"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, fsw);
-	}
-	else if ([registerName isEqualToString:@"fop"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, fop);
-	}
-	else if ([registerName isEqualToString:@"ip"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, ip);
-	}
-	else if ([registerName isEqualToString:@"cs"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, cs);
-	}
-	else if ([registerName isEqualToString:@"dp"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, dp);
-	}
-	else if ([registerName isEqualToString:@"ds"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, ds);
-	}
-	else if ([registerName isEqualToString:@"mxcsr"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, mxcsr);
-	}
-	else if ([registerName isEqualToString:@"mxcsrmask"])
-	{
-		WRITE_VECTOR_STATE(vectorState, newVariable, mxcsrmask);
-	}
-	else if ([registerName hasPrefix:@"stmm"])
-	{
-		int stmmIndexValue = [[registerName substringFromIndex:[@"stmm" length]] intValue];
-		memcpy((_STRUCT_MMST_REG *)&vectorState.ufs.as64.__fpu_stmm0 + stmmIndexValue, newVariable.rawValue, MIN(newVariable.size, sizeof(_STRUCT_MMST_REG)));
-	}
-	else if ([registerName hasPrefix:@"xmm"])
-	{
-		int xmmIndexValue = [[registerName substringFromIndex:[@"xmm" length]] intValue];
-		memcpy((_STRUCT_XMM_REG *)&vectorState.ufs.as64.__fpu_xmm0 + xmmIndexValue, newVariable.rawValue, MIN(newVariable.size, sizeof(_STRUCT_XMM_REG)));
-	}
-	else if ([registerName hasPrefix:@"ymmh"])
-	{
-		int ymmhIndexValue = [[registerName substringFromIndex:[@"ymmh" length]] intValue];
-		memcpy((_STRUCT_XMM_REG *)&vectorState.ufs.as64.__fpu_ymmh0 + ymmhIndexValue, newVariable.rawValue, MIN(newVariable.size, sizeof(_STRUCT_XMM_REG)));
-	}
-	else
-	{
-		return NO;
-	}
-#endif
 	
 	if (!ZGSetVectorThreadState(&vectorState, _breakPoint.thread, vectorStateCount, processType))
 	{
@@ -340,69 +269,20 @@
 {
 	zg_thread_state_t threadState;
 	mach_msg_type_number_t threadStateCount;
-	if (!ZGGetGeneralThreadState(&threadState, _breakPoint.thread, &threadStateCount))
+	thread_act_t thread = _breakPoint.thread;
+	if (!ZGGetGeneralThreadState(&threadState, thread, &threadStateCount))
 	{
 		return NO;
 	}
 	
 	NSString *registerName = theRegister.variable.name;
 	
-	BOOL shouldWriteRegister = NO;
-#if TARGET_CPU_ARM64
-	NSArray<NSString *> *generalRegisters = @[@"x0", @"x1", @"x2", @"x3", @"x4", @"x5", @"x6", @"x7", @"x8", @"x9", @"x10", @"x11", @"x12", @"x13", @"x14", @"x15", @"x16", @"x17", @"x18", @"x19", @"x20", @"x21", @"x22", @"x23", @"x24", @"x25", @"x26", @"x27", @"x28"];
+	BOOL shouldWriteRegister = [ZGRegisterEntries changeGeneralPurposeThreadState:&threadState thread:thread registerName:registerName value:(const void *)newVariable.rawValue size:newVariable.size];
 	
-	if ([generalRegisters containsObject:registerName])
+	if (!shouldWriteRegister)
 	{
-		memcpy((uint64_t *)&threadState.__x + [generalRegisters indexOfObject:registerName], newVariable.rawValue, MIN(newVariable.size, sizeof(*threadState.__x)));
-		shouldWriteRegister = YES;
+		return NO;
 	}
-	else if ([registerName isEqualToString:@"fp"])
-	{
-		memcpy((uint64_t *)&threadState.__fp, newVariable.rawValue, MIN(newVariable.size, sizeof(threadState.__fp)));
-		shouldWriteRegister = YES;
-	}
-	else if ([registerName isEqualToString:@"lr"])
-	{
-		memcpy((uint64_t *)&threadState.__lr, newVariable.rawValue, MIN(newVariable.size, sizeof(threadState.__lr)));
-		shouldWriteRegister = YES;
-	}
-	else if ([registerName isEqualToString:@"sp"])
-	{
-		memcpy((uint64_t *)&threadState.__sp, newVariable.rawValue, MIN(newVariable.size, sizeof(threadState.__sp)));
-		shouldWriteRegister = YES;
-	}
-	else if ([registerName isEqualToString:@"pc"])
-	{
-		memcpy((uint64_t *)&threadState.__pc, newVariable.rawValue, MIN(newVariable.size, sizeof(threadState.__pc)));
-		shouldWriteRegister = YES;
-	}
-	else if ([registerName isEqualToString:@"cpsr"])
-	{
-		memcpy((uint64_t *)&threadState.__cpsr, newVariable.rawValue, MIN(newVariable.size, sizeof(threadState.__cpsr)));
-		shouldWriteRegister = YES;
-	}
-#else
-	if (ZG_PROCESS_TYPE_IS_X86_64(_breakPoint.registersState.processType))
-	{
-		NSArray<NSString *> *registers64 = @[@"rax", @"rbx", @"rcx", @"rdx", @"rdi", @"rsi", @"rbp", @"rsp", @"r8", @"r9", @"r10", @"r11", @"r12", @"r13", @"r14", @"r15", @"rip", @"rflags", @"cs", @"fs", @"gs"];
-		if ([registers64 containsObject:registerName])
-		{
-			memcpy((uint64_t *)&threadState.uts.ts64 + [registers64 indexOfObject:registerName], newVariable.rawValue, MIN(newVariable.size, sizeof(uint64_t)));
-			shouldWriteRegister = YES;
-		}
-	}
-	else
-	{
-		NSArray<NSString *> *registers32 = @[@"eax", @"ebx", @"ecx", @"edx", @"edi", @"esi", @"ebp", @"esp", @"ss", @"eflags", @"eip", @"cs", @"ds", @"es", @"fs", @"gs"];
-		if ([registers32 containsObject:registerName])
-		{
-			memcpy((uint32_t *)&threadState.uts.ts32 + [registers32 indexOfObject:registerName], newVariable.rawValue, MIN(newVariable.size, sizeof(uint32_t)));
-			shouldWriteRegister = YES;
-		}
-	}
-#endif
-	
-	if (!shouldWriteRegister) return NO;
 	
 	if (!ZGSetGeneralThreadState(&threadState, _breakPoint.thread, threadStateCount))
 	{
