@@ -226,10 +226,7 @@
 	 object:self.window];
 	
 	// Disable default Big Sur toolbar style we don't properly support
-	if (@available(macOS 11.0, *))
-	{
-		self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
-	}
+	self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 }
 
 - (void)updateWindow

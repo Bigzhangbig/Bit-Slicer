@@ -74,14 +74,7 @@
 	
 	[self.window.toolbar setSelectedItemIdentifier:ZGSoftwareUpdatePreferenceIdentifier];
 	
-	if (@available(macOS 15, *))
-	{
-		_scriptsToolbarItem.image = [NSImage imageWithSystemSymbolName:@"text.document" accessibilityDescription:nil];
-	}
-	else
-	{
-		_scriptsToolbarItem.image = [NSImage imageWithSystemSymbolName:@"text.alignleft" accessibilityDescription:nil];
-	}
+	_scriptsToolbarItem.image = [NSImage imageWithSystemSymbolName:@"text.document" accessibilityDescription:nil];
 	
 	[self setUpdatePreferencesView];
 }

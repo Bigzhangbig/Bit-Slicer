@@ -285,14 +285,7 @@ static ZGHotKey *_decodeHotKeyForKey(NSString *keyValue)
 	
 	[_statusTextField.cell setBackgroundStyle:NSBackgroundStyleRaised];
 	
-	if (@available(macOS 15, *))
-	{
-		_continueButton.image = [NSImage imageWithSystemSymbolName:@"arrow.trianglehead.clockwise.rotate.90" accessibilityDescription:nil];
-	}
-	else
-	{
-		_continueButton.image = [NSImage imageWithSystemSymbolName:@"arrow.clockwise" accessibilityDescription:nil];
-	}
+	_continueButton.image = [NSImage imageWithSystemSymbolName:@"arrow.trianglehead.clockwise.rotate.90" accessibilityDescription:nil];
 	
 	[_stepExecutionSegmentedControl setImage:[NSImage imageWithSystemSymbolName:@"arrow.turn.right.down" accessibilityDescription:nil] forSegment:ZGStepIntoExecution];
 	[_stepExecutionSegmentedControl setImage:[NSImage imageWithSystemSymbolName:@"arrow.turn.down.right" accessibilityDescription:nil] forSegment:ZGStepOverExecution];
