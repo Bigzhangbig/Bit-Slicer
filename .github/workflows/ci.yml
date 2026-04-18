@@ -9,22 +9,24 @@ on:
 jobs:
   build:
     name: Build and Test Bit Slicer on macOS
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build
         env:
-            DEVELOPER_DIR: '/Applications/Xcode_16.2.app/Contents/Developer'
+            DEVELOPER_DIR: '/Applications/Xcode_26.4.app/Contents/Developer'
         run: |
           xcodebuild build-for-testing -target 'Bit Slicer Tests' -scheme 'Bit Slicer' -derivedDataPath build CODE_SIGN_IDENTITY="-"
       - name: Test
+        env:
+            DEVELOPER_DIR: '/Applications/Xcode_26.4.app/Contents/Developer'
         run: |
           xcodebuild test-without-building -target 'Bit Slicer Tests' -scheme 'Bit Slicer' -derivedDataPath build
       - name: Archive Test Results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
             name: 'build-logs'
             path: build/Logs
