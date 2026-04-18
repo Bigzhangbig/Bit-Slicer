@@ -60,10 +60,6 @@ typedef enum : int8_t
 
 #define ZG_PROCESS_TYPE_IS_ARM64(processType) (processType == ZGProcessTypeARM64)
 
-#if TARGET_CPU_ARM64
 #define ZG_PROCESS_TYPE_HOST ZGProcessTypeARM64
-#else
-#define ZG_PROCESS_TYPE_HOST ZGProcessTypeX86_64
-#endif
 
 #endif

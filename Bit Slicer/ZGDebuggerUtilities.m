@@ -44,15 +44,7 @@
 #import "ZGCodeInjectionHandler.h"
 #import "keystone.h"
 
-#if TARGET_CPU_ARM64
 const uint8_t gBreakpointOpcode[4] = {0x00, 0x00, 0x20, 0xD4};
-#else
-const uint8_t gBreakpointOpcode[1] = {0xCC};
-#endif
-
-#define JUMP_REL32_INSTRUCTION_LENGTH 5
-#define INDIRECT_JUMP_INSTRUCTIONS_LENGTH 14
-#define POP_REGISTER_INSTRUCTION_LENGTH 1
 
 @implementation ZGDebuggerUtilities
 
@@ -585,7 +577,7 @@ error:(NSError * __autoreleasing *)error
 		 size:jumpToIslandData.length
 		 address:firstInstruction.variable.address
 		 type:ZGByteArray
-		 qualifier:0
+		 qualifier:(ZGVariableQualifier)0
 		 pointerSize:process.pointerSize];
 		
 		[self
@@ -597,25 +589,12 @@ error:(NSError * __autoreleasing *)error
 		 undoManager:undoManager
 		 actionName:nil];
 		
-		NSData *jumpFromIslandData;
-		if (ZG_PROCESS_TYPE_IS_ARM64(processType))
-		{
-			jumpFromIslandData =
-			[[self class]
-			 assembleInstructionText:[NSString stringWithFormat:@"b %llu", firstInstruction.variable.address + hookedInstructionsLength]
-			 atInstructionPointer:allocatedAddress + newInstructionsData.length
-			 processType:processType
-			 error:error];
-		}
-		else
-		{
-			jumpFromIslandData =
-			[[self class]
-			 assembleInstructionText:usingRelativeBranching ? [NSString stringWithFormat:@"jmp %llu", firstInstruction.variable.address + hookedInstructionsLength] : [NSString stringWithFormat:@"push rax\nmov rax, %llu\njmp rax", firstInstruction.variable.address + jumpToIslandData.length - POP_REGISTER_INSTRUCTION_LENGTH]
-			 atInstructionPointer:allocatedAddress + newInstructionsData.length
-			 processType:processType
-			 error:error];
-		}
+		NSData *jumpFromIslandData =
+		[[self class]
+			assembleInstructionText:[NSString stringWithFormat:@"b %llu", firstInstruction.variable.address + hookedInstructionsLength]
+			atInstructionPointer:allocatedAddress + newInstructionsData.length
+			processType:processType
+			error:error];
 		
 		if (jumpFromIslandData.length == 0)
 		{
@@ -656,20 +635,7 @@ error:(NSError * __autoreleasing *)error
 {
 	NSArray<ZGBreakPoint *> *breakPoints = breakPointController.breakPoints;
 	
-	BOOL useRelativeBranching = [self shouldInjectCodeWithRelativeBranchingWithProcess:process processType:processType sourceAddress:address destinationAddress:destinationAddress];
-	
-	int consumedLength;
-	if (ZG_PROCESS_TYPE_IS_ARM64(processType))
-	{
-		consumedLength = 4;
-	}
-	else
-	{
-		consumedLength =
-		useRelativeBranching ?
-		JUMP_REL32_INSTRUCTION_LENGTH :
-		INDIRECT_JUMP_INSTRUCTIONS_LENGTH;
-	}
+	int consumedLength = 4;
 	
 	NSArray<ZGMachBinary *> *machBinaries = [ZGMachBinary machBinariesInProcess:process];
 	NSMutableArray<ZGInstruction *> *instructions = [[NSMutableArray alloc] init];

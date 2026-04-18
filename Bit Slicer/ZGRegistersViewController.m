@@ -112,7 +112,6 @@
 	
 	for (ZGRegister *theRegister in _registers)
 	{
-#if TARGET_CPU_ARM64
 		if ([theRegister.variable.name isEqualToString:@"pc"])
 		{
 			ZGVariable *newVariable = [theRegister.variable copy];
@@ -121,25 +120,6 @@
 			[self changeRegister:theRegister oldVariable:theRegister.variable newVariable:newVariable];
 			break;
 		}
-#else
-		if ([@[@"eip", @"rip"] containsObject:theRegister.variable.name])
-		{
-			ZGVariable *newVariable = [theRegister.variable copy];
-			
-			if (ZG_PROCESS_TYPE_IS_X86_64(_breakPoint.process.type))
-			{
-				[newVariable setRawValue:&newInstructionPointer];
-			}
-			else
-			{
-				ZG32BitMemoryAddress memoryAddress = (ZG32BitMemoryAddress)newInstructionPointer;
-				[newVariable setRawValue:&memoryAddress];
-			}
-			
-			[self changeRegister:theRegister oldVariable:theRegister.variable newVariable:newVariable];
-			break;
-		}
-#endif
 	}
 }
 
@@ -228,11 +208,6 @@
 	[_tableView reloadData];
 }
 
-#if TARGET_CPU_ARM64
-#else
-#define WRITE_VECTOR_STATE(vectorState, variable, registerName) memcpy(&vectorState.ufs.as64.__fpu_##registerName, variable.rawValue, MIN(variable.size, sizeof(vectorState.ufs.as64.__fpu_##registerName)))
-#endif
-
 - (BOOL)changeFloatingPointRegister:(ZGRegister *)theRegister newVariable:(ZGVariable *)newVariable
 {
 	ZGProcessType processType = _breakPoint.process.type;
@@ -294,21 +269,10 @@
 	
 	theRegister.variable = newVariable;
 	
-#if TARGET_CPU_ARM64
 	if ([registerName isEqualToString:@"pc"])
 	{
 		[self setInstructionPointer:*(uint64_t *)theRegister.rawValue];
 	}
-#else
-	if ([registerName isEqualToString:@"rip"])
-	{
-		[self setInstructionPointer:*(uint64_t *)theRegister.rawValue];
-	}
-	else if ([registerName isEqualToString:@"eip"])
-	{
-		[self setInstructionPointer:*(uint32_t *)theRegister.rawValue];
-	}
-#endif
 	
 	return YES;
 }
