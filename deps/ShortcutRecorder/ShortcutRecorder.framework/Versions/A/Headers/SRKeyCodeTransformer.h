@@ -6,9 +6,6 @@
 #import <Cocoa/Cocoa.h>
 #import <ShortcutRecorder/SRCommon.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverriding-method-mismatch"
-
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -39,11 +36,13 @@ NS_SWIFT_UNAVAILABLE("use SRLiteralKeyCodeTransformer / SRSymbolicKeyCodeTransfo
  @discussion
  The underlying type is TISInputSourceRef.
 
- @note Shared transformers autoupdate their input sources to the current.
+ @note Shared transformers autoupdate their input sources to the current, thus returned value may not be persistent.
  */
 @property (readonly) id inputSource;
 
-- (instancetype)initWithInputSource:(id)anInputSource;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithInputSource:(id)anInputSource NS_DESIGNATED_INITIALIZER;
 
 /*!
  Return literal string for the given key code, modifier flags and layout direction.
@@ -118,27 +117,4 @@ NS_SWIFT_NAME(ASCIISymbolicKeyCodeTransformer)
 @interface SRASCIISymbolicKeyCodeTransformer : SRKeyCodeTransformer
 @end
 
-
-@interface SRKeyCodeTransformer (Deprecated)
-@property (class, readonly) NSDictionary<NSNumber *, NSString *> *specialKeyCodeToSymbolMapping;
-@property (class, readonly) NSDictionary<NSNumber *, NSString *> *specialKeyCodeToLiteralMapping;
-@property (readonly) BOOL usesPlainStrings __attribute__((deprecated));
-@property (readonly) BOOL usesASCIICapableKeyboardInputSource __attribute__((deprecated));
-+ (instancetype)sharedASCIITransformer __attribute__((deprecated("", "SRASCIISymbolicKeyCodeTransformer/sharedTransformer")));
-+ (SRKeyCodeTransformer *)sharedPlainTransformer __attribute__((deprecated("", "SRLiteralKeyCodeTransformer/sharedTransformer")));
-+ (SRKeyCodeTransformer *)sharedPlainASCIITransformer __attribute__((deprecated("", "SRASCIILiteralKeyCodeTransformer/sharedTransformer")));
-- (instancetype)initWithASCIICapableKeyboardInputSource:(BOOL)aUsesASCII
-                                           plainStrings:(BOOL)aUsesPlainStrings __attribute__((deprecated));
-- (BOOL)isKeyCodeSpecial:(SRKeyCode)aKeyCode __attribute__((deprecated));
-- (NSString *)transformedValue:(NSNumber *)aValue
-             withModifierFlags:(NSNumber *)aModifierFlags __attribute__((deprecated));
-- (NSString *)transformedSpecialKeyCode:(NSNumber *)aKeyCode
-              withExplicitModifierFlags:(NSNumber *)aModifierFlags __attribute__((deprecated));
-- (NSString *)transformedValue:(NSNumber *)aValue
-     withImplicitModifierFlags:(NSNumber *)anImplicitModifierFlags
-         explicitModifierFlags:(NSNumber *)anExplicitModifierFlags __attribute__((deprecated));
-@end
-
 NS_ASSUME_NONNULL_END
-
-#pragma clang diagnostic pop

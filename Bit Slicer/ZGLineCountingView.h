@@ -31,7 +31,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "HFLineCountingView.h"
+#import <HexFiend/HFLineCountingView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -44,7 +44,6 @@ typedef struct
 	char name[16];
 	char value[64];
 	size_t size;
-	size_t offset;
 	ZGRegisterType type;
 } ZGRegisterEntry;
 
@@ -55,6 +54,9 @@ void *ZGRegisterEntryValue(ZGRegisterEntry *entry);
 
 + (int)getRegisterEntries:(ZGRegisterEntry *)entries fromGeneralPurposeThreadState:(zg_thread_state_t)threadState processType:(ZGProcessType)processType;
 + (int)getRegisterEntries:(ZGRegisterEntry *)entries fromVectorThreadState:(zg_vector_state_t)vectorState processType:(ZGProcessType)processType hasAVXSupport:(BOOL)hasAVXSupport;
+
++ (BOOL)changeGeneralPurposeThreadState:(zg_thread_state_t *)threadState thread:(thread_act_t)thread registerName:(NSString *)registerName value:(const void *)rawValue size:(size_t)size;
++ (BOOL)changeVectorThreadState:(zg_vector_state_t *)vectorState thread:(thread_act_t)thread registerName:(NSString *)registerName value:(const void *)rawValue size:(size_t)size;
 
 + (NSArray<ZGVariable *> *)registerVariablesFromVectorThreadState:(zg_vector_state_t)vectorState processType:(ZGProcessType)processType hasAVXSupport:(BOOL)hasAVXSupport;
 + (NSArray<ZGVariable *> *)registerVariablesFromGeneralPurposeThreadState:(zg_thread_state_t)threadState processType:(ZGProcessType)processType;

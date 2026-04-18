@@ -41,41 +41,19 @@ void *ZGRegisterEntryValue(ZGRegisterEntry *entry)
 	return entry->value;
 }
 
-#if TARGET_CPU_ARM64
-
-#define ADD_GENERAL_REGISTER(entries, entryIndex, threadState, registerName) \
+#define ADD_GENERAL_REGISTER(entries, entryIndex, threadState, registerName, registerValue) \
 do { \
 	strncpy((char *)&entries[entryIndex].name, #registerName, sizeof(entries[entryIndex].name)); \
-	entries[entryIndex].size = sizeof(threadState.__##registerName); \
-	memcpy(&entries[entryIndex].value, &threadState.__##registerName, entries[entryIndex].size); \
-	entries[entryIndex].offset = offsetof(zg_thread_state_t, __##registerName); \
+	entries[entryIndex].size = sizeof(registerValue); \
+	memcpy(&entries[entryIndex].value, &(registerValue), entries[entryIndex].size); \
 	entries[entryIndex].type = ZGRegisterGeneralPurpose; \
 	entryIndex++; \
 } while(0)
-
-#else
-
-#define ADD_GENERAL_REGISTER(entries, entryIndex, threadState, registerName, structureType, structName) \
-do { \
-	strncpy((char *)&entries[entryIndex].name, #registerName, sizeof(entries[entryIndex].name)); \
-	entries[entryIndex].name[sizeof(entries[entryIndex].name) - 1] = '\0'; \
-	entries[entryIndex].size = sizeof(threadState.uts.structureType.__##registerName); \
-	memcpy(&entries[entryIndex].value, &threadState.uts.structureType.__##registerName, entries[entryIndex].size); \
-	entries[entryIndex].offset = offsetof(structName, __##registerName); \
-	entries[entryIndex].type = ZGRegisterGeneralPurpose; \
-	entryIndex++; \
-} while(0)
-
-#define ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, registerName) ADD_GENERAL_REGISTER(entries, entryIndex, threadState, registerName, ts32, zg_thread_state32_t)
-#define ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, registerName) ADD_GENERAL_REGISTER(entries, entryIndex, threadState, registerName, ts64, zg_thread_state64_t)
-
-#endif
 
 + (int)getRegisterEntries:(ZGRegisterEntry *)entries fromGeneralPurposeThreadState:(zg_thread_state_t)threadState processType:(ZGProcessType)processType
 {
 	int entryIndex = 0;
 	
-#if TARGET_CPU_ARM64
 	// Add general purpose registers
 	for (size_t registerIndex = 0; registerIndex < sizeof(threadState.__x) / sizeof(*threadState.__x); registerIndex++)
 	{
@@ -85,121 +63,47 @@ do { \
 		strncpy((char *)&entries[entryIndex].name, registerName, sizeof(entries[entryIndex].name));
 		entries[entryIndex].size = sizeof(*threadState.__x);
 		memcpy(&entries[entryIndex].value, &threadState.__x[registerIndex], entries[entryIndex].size);
-		entries[entryIndex].offset = registerIndex * sizeof(*threadState.__x);
 		entries[entryIndex].type = ZGRegisterGeneralPurpose;
 		
 		entryIndex++;
 	}
 	
 	// Frame pointer register
-	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, fp);
+	{
+		ZGMemoryAddress fp = ZGBasePointerFromGeneralThreadState(&threadState, processType);
+		ADD_GENERAL_REGISTER(entries, entryIndex, threadState, fp, fp);
+	}
 	
 	// Link register
-	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, lr);
+	{
+		ZGMemoryAddress lr = ZGLinkRegisterFromGeneralThreadState(&threadState);
+		ADD_GENERAL_REGISTER(entries, entryIndex, threadState, lr, lr);
+	}
 	
 	// Stack pointer
-	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, sp);
+	{
+		ZGMemoryAddress sp = ZGStackPointerFromGeneralThreadState(&threadState);
+		ADD_GENERAL_REGISTER(entries, entryIndex, threadState, sp, sp);
+	}
 	
 	// Program counter
-	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, pc);
+	{
+		ZGMemoryAddress pc = ZGInstructionPointerFromGeneralThreadState(&threadState, processType);
+		ADD_GENERAL_REGISTER(entries, entryIndex, threadState, pc, pc);
+	}
 	
 	// Program status register
-	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, cpsr);
-	
-#else
-	if (ZG_PROCESS_TYPE_IS_X86_64(processType))
-	{
-		// General registers
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rax);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rbx);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rcx);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rdx);
-		
-		// Index and pointers
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rdi);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rsi);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rbp);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rsp);
-		
-		// Extra registers
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r8);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r9);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r10);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r11);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r12);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r13);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r14);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, r15);
-		
-		// Instruction pointer
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rip);
-		
-		// Flags indicator
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, rflags);
-		
-		// Segment registers
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, cs);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, fs);
-		ADD_GENERAL_REGISTER_64(entries, entryIndex, threadState, gs);
-	}
-	else
-	{
-		// General registers
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, eax);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, ebx);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, ecx);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, edx);
-		
-		// Index and pointers
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, edi);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, esi);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, ebp);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, esp);
-		
-		// Segment register
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, ss);
-		
-		// Flags indicator
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, eflags);
-		
-		// Instruction pointer
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, eip);
-		
-		// Segment registers
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, cs);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, ds);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, es);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, fs);
-		ADD_GENERAL_REGISTER_32(entries, entryIndex, threadState, gs);
-	}
-#endif
+	ADD_GENERAL_REGISTER(entries, entryIndex, threadState, cpsr, threadState.__cpsr);
 	
 	entries[entryIndex].name[0] = 0;
 	
 	return entryIndex;
 }
 
-#if TARGET_CPU_ARM64
-#else
-
-#define ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, registerName) \
-do { \
-	strncpy((char *)&entries[entryIndex].name, #registerName, sizeof(entries[entryIndex].name)); \
-	entries[entryIndex].name[sizeof(entries[entryIndex].name) - 1] = '\0'; \
-	entries[entryIndex].size = sizeof(vectorState.ufs.as64.__fpu_##registerName); \
-	entries[entryIndex].offset = offsetof(x86_avx_state64_t, __fpu_##registerName); \
-	memcpy(&entries[entryIndex].value, &vectorState.ufs.as64.__fpu_##registerName, entries[entryIndex].size); \
-	entries[entryIndex].type = ZGRegisterVector; \
-	entryIndex++; \
-} while(0)
-
-#endif
-
 + (int)getRegisterEntries:(ZGRegisterEntry *)entries fromVectorThreadState:(zg_vector_state_t)vectorState processType:(ZGProcessType)processType hasAVXSupport:(BOOL)hasAVXSupport
 {
 	int entryIndex = 0;
 	
-#if TARGET_CPU_ARM64
 	// Add vector registers
 	for (size_t registerIndex = 0; registerIndex < sizeof(vectorState.__v) / sizeof(*vectorState.__v); registerIndex++)
 	{
@@ -209,7 +113,6 @@ do { \
 		strncpy((char *)&entries[entryIndex].name, registerName, sizeof(entries[entryIndex].name));
 		entries[entryIndex].size = sizeof(*vectorState.__v);
 		memcpy(&entries[entryIndex].value, &vectorState.__v[registerIndex], entries[entryIndex].size);
-		entries[entryIndex].offset = registerIndex * sizeof(*vectorState.__v);
 		entries[entryIndex].type = ZGRegisterVector;
 		
 		entryIndex++;
@@ -222,7 +125,6 @@ do { \
 		strncpy((char *)&entries[entryIndex].name, registerName, sizeof(entries[entryIndex].name));
 		entries[entryIndex].size = sizeof(vectorState.__fpsr);
 		memcpy(&entries[entryIndex].value, &vectorState.__fpsr, entries[entryIndex].size);
-		entries[entryIndex].offset = offsetof(zg_vector_state_t, __fpsr);
 		entries[entryIndex].type = ZGRegisterVector;
 		
 		entryIndex++;
@@ -235,92 +137,87 @@ do { \
 		strncpy((char *)&entries[entryIndex].name, registerName, sizeof(entries[entryIndex].name));
 		entries[entryIndex].size = sizeof(vectorState.__fpcr);
 		memcpy(&entries[entryIndex].value, &vectorState.__fpcr, entries[entryIndex].size);
-		entries[entryIndex].offset = offsetof(zg_vector_state_t, __fpcr);
 		entries[entryIndex].type = ZGRegisterVector;
 		
 		entryIndex++;
 	}
 	
-#else
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, fcw); // FPU control word
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, fsw); // FPU status word
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ftw); // FPU tag word
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, fop); // FPU Opcode
-	
-	// Instruction Pointer
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ip); // offset
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, cs); // selector
-	
-	// Instruction operand (data) pointer
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, dp); // offset
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ds); // selector
-	
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, mxcsr); // MXCSR Register state
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, mxcsrmask); // MXCSR mask
-	
-	// STX/MMX
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm0);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm1);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm2);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm3);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm4);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm5);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm6);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, stmm7);
-	
-	// XMM 0 through 7
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm0);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm1);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm2);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm3);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm4);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm5);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm6);
-	ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm7);
-	
-	if (ZG_PROCESS_TYPE_IS_X86_64(processType))
-	{
-		// XMM 8 through 15
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm8);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm9);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm10);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm11);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm12);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm13);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm14);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, xmm15);
-	}
-	
-	if (hasAVXSupport)
-	{
-		// YMMH 0 through 7
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh0);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh1);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh2);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh3);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh4);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh5);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh6);
-		ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh7);
-		
-		if (ZG_PROCESS_TYPE_IS_X86_64(processType))
-		{
-			// YMMH 8 through 15
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh8);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh9);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh10);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh11);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh12);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh13);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh14);
-			ADD_VECTOR_REGISTER(entries, entryIndex, vectorState, ymmh15);
-		}
-	}
-#endif
-	
 	entries[entryIndex].name[0] = 0;
 	
 	return entryIndex;
+}
+
++ (BOOL)changeGeneralPurposeThreadState:(zg_thread_state_t *)threadState thread:(thread_act_t)thread registerName:(NSString *)registerName value:(const void *)rawValue size:(size_t)size
+{
+	NSArray<NSString *> *generalRegisters = @[@"x0", @"x1", @"x2", @"x3", @"x4", @"x5", @"x6", @"x7", @"x8", @"x9", @"x10", @"x11", @"x12", @"x13", @"x14", @"x15", @"x16", @"x17", @"x18", @"x19", @"x20", @"x21", @"x22", @"x23", @"x24", @"x25", @"x26", @"x27", @"x28"];
+	
+	if ([generalRegisters containsObject:registerName])
+	{
+		memcpy((uint64_t *)&threadState->__x + [generalRegisters indexOfObject:registerName], rawValue, MIN(size, sizeof(threadState->__x)));
+		return YES;
+	}
+	else if ([registerName isEqualToString:@"fp"])
+	{
+		ZGMemoryAddress value = 0x0;
+		memcpy(&value, rawValue, MIN(size, sizeof(value)));
+		
+		return ZGSetBasePointerFromGeneralThreadState(threadState, thread, value);
+	}
+	else if ([registerName isEqualToString:@"lr"])
+	{
+		ZGMemoryAddress value = 0x0;
+		memcpy(&value, rawValue, MIN(size, sizeof(value)));
+		
+		return ZGSetLinkRegisterFromGeneralThreadState(threadState, thread, value);
+	}
+	else if ([registerName isEqualToString:@"sp"])
+	{
+		ZGMemoryAddress value = 0x0;
+		memcpy(&value, rawValue, MIN(size, sizeof(value)));
+		
+		return ZGSetStackPointerFromGeneralThreadState(threadState, thread, value);
+	}
+	else if ([registerName isEqualToString:@"pc"])
+	{
+		ZGMemoryAddress value = 0x0;
+		memcpy(&value, rawValue, MIN(size, sizeof(value)));
+		
+		return ZGSetInstructionPointerFromGeneralThreadState(threadState, thread, value, ZGProcessTypeARM64);
+	}
+	else if ([registerName isEqualToString:@"cpsr"])
+	{
+		memcpy((uint32_t *)&threadState->__cpsr, rawValue, MIN(size, sizeof(threadState->__cpsr)));
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
++ (BOOL)changeVectorThreadState:(zg_vector_state_t *)vectorState thread:(thread_act_t)thread registerName:(NSString *)registerName value:(const void *)rawValue size:(size_t)size
+{
+	NSArray<NSString *> *vectorRegisters = @[@"v0", @"v1", @"v2", @"v3", @"v4", @"v5", @"v6", @"v7", @"v8", @"v9", @"v10", @"v11", @"v12", @"v13", @"v14", @"v15", @"v16", @"v17", @"v18", @"v19", @"v20", @"v21", @"v22", @"v23", @"v24", @"v25", @"v26", @"v27", @"v28", @"v29", @"v30", @"v31"];
+	
+	if ([vectorRegisters containsObject:registerName])
+	{
+		memcpy((uint64_t *)&vectorState->__v + [vectorRegisters indexOfObject:registerName], rawValue, MIN(size, sizeof(vectorState->__v)));
+		return YES;
+	}
+	else if ([registerName isEqualToString:@"fpsr"])
+	{
+		memcpy((uint32_t *)&vectorState->__fpsr, rawValue, MIN(size, sizeof(vectorState->__fpsr)));
+		return YES;
+	}
+	else if ([registerName isEqualToString:@"fpcr"])
+	{
+		memcpy((uint32_t *)&vectorState->__fpcr, rawValue, MIN(size, sizeof(vectorState->__fpcr)));
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
 }
 
 + (NSArray<ZGVariable *> *)registerVariablesFromVectorThreadState:(zg_vector_state_t)vectorState processType:(ZGProcessType)processType hasAVXSupport:(BOOL)hasAVXSupport
@@ -352,7 +249,7 @@ do { \
 {
 	NSMutableArray<ZGVariable *> *registerVariables = [[NSMutableArray alloc] init];
 	
-	ZGRegisterEntry entries[35];
+	ZGRegisterEntry entries[ZG_MAX_REGISTER_ENTRIES];
 	[ZGRegisterEntries getRegisterEntries:entries fromGeneralPurposeThreadState:threadState processType:processType];
 	
 	for (ZGRegisterEntry *entry = entries; !ZG_REGISTER_ENTRY_IS_NULL(entry); entry++)

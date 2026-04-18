@@ -6,10 +6,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wfloat-equal"
-#pragma clang diagnostic ignored "-Wsign-conversion"
-
 #define HFDEFAULT_FONT (@"Monaco")
 #define HFDEFAULT_FONTSIZE ((CGFloat)10.)
 
@@ -433,15 +429,15 @@ static inline unsigned long long llmin(unsigned long long a, unsigned long long 
 
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
 static inline CGFloat ld2f(long double val) {
-//#if ! NDEBUG
-//     if (isfinite(val)) {
-//        assert(val <= CGFLOAT_MAX);
-//        assert(val >= -CGFLOAT_MAX);
-//        if ((val > 0 && val < CGFLOAT_MIN) || (val < 0 && val > -CGFLOAT_MIN)) {
-//            NSLog(@"Warning - conversion of long double %Lf to CGFloat will result in the non-normal CGFloat %f", val, (CGFloat)val);
-//        }
-//     }
-//#endif
+#if ! NDEBUG
+     if (isfinite(val)) {
+        assert(val <= CGFLOAT_MAX);
+        assert(val >= -CGFLOAT_MAX);
+        if ((val > 0 && val < CGFLOAT_MIN) || (val < 0 && val > -CGFLOAT_MIN)) {
+            NSLog(@"Warning - conversion of long double %Lf to CGFloat will result in the non-normal CGFloat %f", val, (CGFloat)val);
+        }
+     }
+#endif
     return (CGFloat)val;
 }
 
@@ -487,13 +483,13 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPre
 + (HFRangeWrapper *)withRange:(HFRange)range;
 
 /*! Creates an NSArray of HFRangeWrappers for this HFRange. */
-+ (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
++ (NSArray<HFRangeWrapper *> *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
 
 /*! Given an NSArray of HFRangeWrappers, get all of the HFRanges into a C array. */
-+ (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array;
++ (void)getRanges:(HFRange *)ranges fromArray:(NSArray<HFRangeWrapper *> *)array;
 
 /*! Given an array of HFRangeWrappers, returns a "cleaned up" array of equivalent ranges.  This new array represents the same indexes, but overlapping ranges will have been merged, and the ranges will be sorted in ascending order. */
-+ (NSArray *)organizeAndMergeRanges:(NSArray *)inputRanges;
++ (NSArray<HFRangeWrapper *> *)organizeAndMergeRanges:(NSArray<HFRangeWrapper *> *)inputRanges;
 
 @end
 
@@ -571,7 +567,5 @@ NS_INLINE NSException * _Nullable HFTry(dispatch_block_t block) {
     }
     return nil;
 }
-
-#pragma clang diagnostic pop
 
 NS_ASSUME_NONNULL_END

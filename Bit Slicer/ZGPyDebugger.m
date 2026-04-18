@@ -196,7 +196,7 @@ static PyTypeObject DebuggerType =
 	0, // tp_init
 	0, // tp_alloc
 	0, // tp_new
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 // the rest
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 // the rest
 };
 
 @implementation ZGPyDebugger
@@ -211,8 +211,6 @@ static PyTypeObject DebuggerType =
 	ZGHotKeyCenter * _Nonnull _hotKeyCenter;
 	ZGProcess * _Nonnull _process;
 	ZGBreakPoint * _Nullable _haltedBreakPoint;
-	NSDictionary<NSString *, NSValue *> * _Nullable _generalPurposeRegisterOffsetsDictionary;
-	NSDictionary<NSString *, NSValue *> * _Nullable _vectorRegisterOffsetsDictionary;
 }
 
 + (PyObject *)loadPythonClassInMainModule:(PyObject *)module
@@ -1306,26 +1304,12 @@ static PyObject *Debugger_resume(DebuggerClass *self, PyObject * __unused args)
 	return Py_BuildValue("");
 }
 
-static NSDictionary<NSString *, NSValue *> *registerOffsetsCacheDictionary(ZGRegisterEntry *registerEntries)
+static BOOL writeGeneralPurposeRegister(const char *registerString, PyObject *value, zg_thread_state_t *threadState, thread_act_t thread, BOOL *wroteValue)
 {
-	NSMutableDictionary<NSString *, NSValue *> *offsetsDictionary = [NSMutableDictionary dictionary];
-	for (ZGRegisterEntry *registerEntry = registerEntries; !ZG_REGISTER_ENTRY_IS_NULL(registerEntry); registerEntry++)
+	if (wroteValue != NULL)
 	{
-		NSString *registerEntryName = @(registerEntry->name);
-		if (registerEntryName != nil)
-		{
-			[offsetsDictionary
-			 setObject:[NSValue valueWithBytes:registerEntry objCType:@encode(ZGRegisterEntry)]
-			 forKey:registerEntryName];
-		}
+		*wroteValue = NO;
 	}
-	
-	return [NSDictionary dictionaryWithDictionary:offsetsDictionary];
-}
-
-static BOOL writeRegister(NSDictionary<NSString *, NSValue *> *registerOffsetsDictionary, const char *registerString, PyObject *value, void *registerStartPointer, BOOL *wroteValue)
-{
-	if (wroteValue != NULL) *wroteValue = NO;
 	
 	NSString *registerStringValue = @(registerString);
 	if (registerStringValue == nil)
@@ -1333,43 +1317,124 @@ static BOOL writeRegister(NSDictionary<NSString *, NSValue *> *registerOffsetsDi
 		return YES;
 	}
 	
-	NSValue *registerValue = registerOffsetsDictionary[registerStringValue];
-	if (registerValue == nil)
-	{
-		return YES;
-	}
-	
-	ZGRegisterEntry registerEntry;
-	[registerValue getValue:&registerEntry];
-	
-	void *registerPointer = (uint8_t *)registerStartPointer + registerEntry.offset;
-	
 	if (PyByteArray_Check(value))
 	{
-		memcpy(registerPointer, PyByteArray_AsString(value), MIN((size_t)PyByteArray_Size(value), registerEntry.size));
-		if (wroteValue != NULL) *wroteValue = YES;
+		if ([ZGRegisterEntries changeGeneralPurposeThreadState:threadState thread:thread registerName:registerStringValue value:PyByteArray_AsString(value) size:(size_t)PyByteArray_Size(value)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
 	}
 	else if (PyBytes_Check(value))
 	{
 		Py_buffer buffer;
 		if (PyObject_GetBuffer(value, &buffer, PyBUF_SIMPLE) == 0)
 		{
-			memcpy(registerPointer, buffer.buf, MIN((size_t)buffer.len, registerEntry.size));
-			if (wroteValue != NULL) *wroteValue = YES;
+			if ([ZGRegisterEntries changeGeneralPurposeThreadState:threadState thread:thread registerName:registerStringValue value:buffer.buf size:(size_t)buffer.len])
+			{
+				if (wroteValue != NULL)
+				{
+					*wroteValue = YES;
+				}
+			}
 		}
 	}
 	else if (PyLong_Check(value))
 	{
 		unsigned PY_LONG_LONG integerValue = PyLong_AsUnsignedLongLongMask(value);
-		memcpy(registerPointer, &integerValue, MIN(registerEntry.size, sizeof(PY_LONG_LONG)));
-		if (wroteValue != NULL) *wroteValue = YES;
+		
+		if ([ZGRegisterEntries changeGeneralPurposeThreadState:threadState thread:thread registerName:registerStringValue value:&integerValue size:sizeof(integerValue)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
 	}
-	// it may be ambiguous if the register size is >= 8 bytes
-	else if (registerEntry.size >= sizeof(float) && registerEntry.size < sizeof(double) && PyFloat_Check(value))
+	else if (PyFloat_Check(value))
 	{
 		float floatValue = (float)PyFloat_AsDouble(value);
-		*(float *)registerPointer = floatValue;
-		if (wroteValue != NULL) *wroteValue = YES;
+		
+		if ([ZGRegisterEntries changeGeneralPurposeThreadState:threadState thread:thread registerName:registerStringValue value:&floatValue size:sizeof(floatValue)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
+	}
+	else
+	{
+		// Unexpected type...
+		PyErr_SetString(PyExc_ValueError, [[NSString stringWithFormat:@"debug.writeRegisters encountered an unexpected value type for key %s", registerString] UTF8String]);
+		return NO;
+	}
+	
+	return YES;
+}
+
+static BOOL writeVectorRegister(const char *registerString, PyObject *value, zg_vector_state_t *vectorState, thread_act_t thread, BOOL *wroteValue)
+{
+	if (wroteValue != NULL)
+	{
+		*wroteValue = NO;
+	}
+	
+	NSString *registerStringValue = @(registerString);
+	if (registerStringValue == nil)
+	{
+		return YES;
+	}
+	
+	if (PyByteArray_Check(value))
+	{
+		if ([ZGRegisterEntries changeVectorThreadState:vectorState thread:thread registerName:registerStringValue value:PyByteArray_AsString(value) size:(size_t)PyByteArray_Size(value)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
+	}
+	else if (PyBytes_Check(value))
+	{
+		Py_buffer buffer;
+		if (PyObject_GetBuffer(value, &buffer, PyBUF_SIMPLE) == 0)
+		{
+			if ([ZGRegisterEntries changeVectorThreadState:vectorState thread:thread registerName:registerStringValue value:buffer.buf size:(size_t)buffer.len])
+			{
+				if (wroteValue != NULL)
+				{
+					*wroteValue = YES;
+				}
+			}
+		}
+	}
+	else if (PyLong_Check(value))
+	{
+		unsigned PY_LONG_LONG integerValue = PyLong_AsUnsignedLongLongMask(value);
+		
+		if ([ZGRegisterEntries changeVectorThreadState:vectorState thread:thread registerName:registerStringValue value:&integerValue size:sizeof(integerValue)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
+	}
+	else if (PyFloat_Check(value))
+	{
+		float floatValue = (float)PyFloat_AsDouble(value);
+		
+		if ([ZGRegisterEntries changeVectorThreadState:vectorState thread:thread registerName:registerStringValue value:&floatValue size:sizeof(floatValue)])
+		{
+			if (wroteValue != NULL)
+			{
+				*wroteValue = YES;
+			}
+		}
 	}
 	else
 	{
@@ -1397,9 +1462,11 @@ static PyObject *Debugger_writeRegisters(DebuggerClass *self, PyObject *args)
 	
 	ZGSuspendTask(self->processTask);
 	
+	thread_act_t thread = self->objcSelf->_haltedBreakPoint.thread;
+	
 	zg_thread_state_t threadState;
 	mach_msg_type_number_t threadStateCount;
-	if (!ZGGetGeneralThreadState(&threadState, self->objcSelf->_haltedBreakPoint.thread, &threadStateCount))
+	if (!ZGGetGeneralThreadState(&threadState, thread, &threadStateCount))
 	{
 		PyErr_SetString(self->debuggerException, "debug.writeRegisters failed retrieving target's thread state");
 		ZGResumeTask(self->processTask);
@@ -1409,30 +1476,11 @@ static PyObject *Debugger_writeRegisters(DebuggerClass *self, PyObject *args)
 	zg_vector_state_t vectorState;
 	mach_msg_type_number_t vectorStateCount;
 	bool hasAVXSupport = NO;
-	BOOL hasVectorRegisters = ZGGetVectorThreadState(&vectorState, self->objcSelf->_haltedBreakPoint.thread, &vectorStateCount, self->processType, &hasAVXSupport);
+	BOOL hasVectorRegisters = ZGGetVectorThreadState(&vectorState, thread, &vectorStateCount, (ZGProcessType)self->processType, &hasAVXSupport);
 	
 	ZGResumeTask(self->processTask);
 	
-	if (self->objcSelf->_generalPurposeRegisterOffsetsDictionary == nil)
-	{
-		ZGRegisterEntry generalPurposeRegisterEntries[ZG_MAX_REGISTER_ENTRIES];
-		[ZGRegisterEntries getRegisterEntries:generalPurposeRegisterEntries fromGeneralPurposeThreadState:threadState processType:self->processType];
-		
-		self->objcSelf->_generalPurposeRegisterOffsetsDictionary = registerOffsetsCacheDictionary(generalPurposeRegisterEntries);
-	}
-	
-	if (hasVectorRegisters && self->objcSelf->_vectorRegisterOffsetsDictionary == nil)
-	{
-		ZGRegisterEntry vectorRegisterEntries[ZG_MAX_REGISTER_ENTRIES];
-		[ZGRegisterEntries getRegisterEntries:vectorRegisterEntries fromVectorThreadState:vectorState processType:self->processType hasAVXSupport:hasAVXSupport];
-		
-		self->objcSelf->_vectorRegisterOffsetsDictionary = registerOffsetsCacheDictionary(vectorRegisterEntries);
-	}
-	
 	BOOL success = YES;
-	
-	NSDictionary<NSString *, NSValue *> *generalPurposeRegisterOffsetsDictionary = self->objcSelf->_generalPurposeRegisterOffsetsDictionary;
-	NSDictionary<NSString *, NSValue *> *vectorRegisterOffsetsDictionary = self->objcSelf->_vectorRegisterOffsetsDictionary;
 	
 	BOOL needsToWriteGeneralRegisters = NO;
 	BOOL needsToWriteVectorRegisters = NO;
@@ -1454,12 +1502,13 @@ static PyObject *Debugger_writeRegisters(DebuggerClass *self, PyObject *args)
 		}
 		
 		BOOL wroteValue = NO;
-		success = writeRegister(generalPurposeRegisterOffsetsDictionary, registerString, value, (uint8_t *)&threadState + sizeof(zg_state_hdr_t), &wroteValue);
+		success = writeGeneralPurposeRegister(registerString, value, &threadState, thread, &wroteValue);
+		
 		if (wroteValue) needsToWriteGeneralRegisters = YES;
 		
 		if (success && !wroteValue && hasVectorRegisters)
 		{
-			success = writeRegister(vectorRegisterOffsetsDictionary, registerString, value, (uint8_t *)&vectorState + sizeof(zg_state_hdr_t), &wroteValue);
+			success = writeVectorRegister(registerString, value, &vectorState, thread, &wroteValue);
 			if (wroteValue) needsToWriteVectorRegisters = YES;
 		}
 		
@@ -1483,7 +1532,7 @@ static PyObject *Debugger_writeRegisters(DebuggerClass *self, PyObject *args)
 	{
 		ZGSuspendTask(self->processTask);
 		
-		if (!ZGSetVectorThreadState(&vectorState, self->objcSelf->_haltedBreakPoint.thread, vectorStateCount, self->processType))
+		if (!ZGSetVectorThreadState(&vectorState, self->objcSelf->_haltedBreakPoint.thread, vectorStateCount, (ZGProcessType)self->processType))
 		{
 			PyErr_SetString(self->debuggerException, "debug.writeRegisters failed to write the new vector state");
 			success = NO;

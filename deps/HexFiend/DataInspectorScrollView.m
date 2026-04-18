@@ -13,9 +13,7 @@
 - (void)drawDividerWithClip:(NSRect)clipRect {
     NSColor *separatorColor = [NSColor lightGrayColor];
     if (HFDarkModeEnabled()) {
-        if (@available(macOS 10.14, *)) {
-            separatorColor = [NSColor separatorColor];
-        }
+		separatorColor = [NSColor separatorColor];
     }
     [separatorColor set];
     NSRect bounds = [self bounds];

@@ -103,7 +103,7 @@
 	
 	ZGMemoryAddress newInstructionAddress = (breakPointAddress == _toIslandInstruction.variable.address) ? _islandAddress : (_toIslandInstruction.variable.address + _toIslandInstruction.variable.size);
 	
-	ZGSetInstructionPointerFromGeneralThreadState(&threadState, newInstructionAddress, _processType);
+	ZGSetInstructionPointerFromGeneralThreadState(&threadState, thread, newInstructionAddress, _processType);
 	
 	ZGSetGeneralThreadState(&threadState, thread, threadStateCount);
 	

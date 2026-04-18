@@ -125,20 +125,15 @@ static bool ZGWriteBytesOverwritingProtectionAndRevertingBack(ZGMemoryMap proces
 		return false;
 	}
 	
-#if TARGET_CPU_ARM64
 	// Check if write isn't present or if execute is present
 	// For processes using a JIT (possibly only with Rosetta) it's possible both write and execute are enabled, but we can't write bytes
 	// without both enabled
 	bool needsToChangeProtection = ((oldProtection & VM_PROT_WRITE) == 0 || (oldProtection & VM_PROT_EXECUTE) != 0);
-#else
-	bool needsToChangeProtection = ((oldProtection & VM_PROT_WRITE) == 0);
-#endif
 		
 	bool needsExecutableProtectionModified;
 	if (needsToChangeProtection)
 	{
 		ZGMemoryProtection newProtection;
-#if TARGET_CPU_ARM64
 		if ((oldProtection & VM_PROT_EXECUTE) != 0)
 		{
 			newProtection = (oldProtection & ~VM_PROT_EXECUTE) | VM_PROT_WRITE;
@@ -147,7 +142,6 @@ static bool ZGWriteBytesOverwritingProtectionAndRevertingBack(ZGMemoryMap proces
 			ZGSuspendTask(processTask);
 		}
 		else
-#endif
 		{
 			newProtection = (oldProtection | VM_PROT_WRITE);
 			needsExecutableProtectionModified = false;

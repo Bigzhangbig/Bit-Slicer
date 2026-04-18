@@ -37,8 +37,6 @@
 		7231440519C57A5300FBE342 /* ZGRegistersState.m in Sources */ = {isa = PBXBuildFile; fileRef = 7231440419C57A5300FBE342 /* ZGRegistersState.m */; };
 		7231440819C607C700FBE342 /* ZGWatchVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 7231440719C607C700FBE342 /* ZGWatchVariable.m */; };
 		7231440E19C6230F00FBE342 /* [Code] Watch Variable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 7231440C19C6230F00FBE342 /* [Code] Watch Variable.stringsdict */; };
-		7235B7A424D7BF980029580A /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7A324D7BF980029580A /* libudis86.a */; };
-		7235B7A724D7C1260029580A /* yasm in Copy Files */ = {isa = PBXBuildFile; fileRef = 7235B7A524D7C1050029580A /* yasm */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7235B7AF24D7CE0B0029580A /* ShortcutRecorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; };
 		7235B7B024D7CE180029580A /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7235B7B224D7D9B10029580A /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7235B7B124D7D9B10029580A /* DDMathParser.framework */; };
@@ -102,10 +100,9 @@
 		72AA79831A23FDDF005A9BD6 /* ZGScriptPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = 72AA79821A23FDDF005A9BD6 /* ZGScriptPrompt.m */; };
 		72ABCBC524E8BA8200EF63A9 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 721594FD24DF36360027F600 /* HexFiend.framework */; };
 		72ABCBC624E8BA8900EF63A9 /* HexFiend.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 721594FD24DF36360027F600 /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		72ABCBE524E8CFF300EF63A9 /* ZGX86DisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */; };
 		72ABCBEA24E8D7D700EF63A9 /* Capstone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBE924E8D7D700EF63A9 /* Capstone.framework */; };
 		72ABCBEB24E8DA1800EF63A9 /* Capstone.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBE924E8D7D700EF63A9 /* Capstone.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		72ABCBEE24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */; };
+		72ABCBEE24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */; };
 		72ABCBF024E9DE9100EF63A9 /* libkeystone.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */; };
 		72ABCBF124E9DEA100EF63A9 /* libkeystone.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		72B5F56B2E92B89D0017B779 /* [Code] Notifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 72B5F5692E92B89D0017B779 /* [Code] Notifications.strings */; };
@@ -152,7 +149,7 @@
 		773E8B021821DDAD00D1A71A /* CoreSymbolication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 773E8B011821DDAD00D1A71A /* CoreSymbolication.framework */; };
 		774B5EE61915361400D7AA69 /* ZGPyKeyCodeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 774B5EE51915361400D7AA69 /* ZGPyKeyCodeModule.m */; };
 		77607AB1185CD50100AC532B /* AGScopeBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 77607AB0185CD50100AC532B /* AGScopeBar.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-semicolon-before-method-body"; }; };
-		7768064018B96A64007F2CAF /* ZGThreadStates.c in Sources */ = {isa = PBXBuildFile; fileRef = 7768063E18B96A64007F2CAF /* ZGThreadStates.c */; };
+		7768064018B96A64007F2CAF /* ZGThreadStates.m in Sources */ = {isa = PBXBuildFile; fileRef = 7768063E18B96A64007F2CAF /* ZGThreadStates.m */; };
 		7768064318B9A36E007F2CAF /* ZGBacktrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 7768064218B9A36E007F2CAF /* ZGBacktrace.m */; };
 		776B62E319312648004BF4A0 /* random_data in Resources */ = {isa = PBXBuildFile; fileRef = 776B62E219312648004BF4A0 /* random_data */; };
 		776B62E6193126B7004BF4A0 /* ByteArraySearchTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 776B62E5193126B7004BF4A0 /* ByteArraySearchTest.mm */; };
@@ -254,7 +251,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				7235B7A724D7C1260029580A /* yasm in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -319,7 +315,6 @@
 		72130FF92BF00FB300691AED /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "Bit Slicer/es.lproj/[Code] Edit Variable Address.strings"; sourceTree = "<group>"; };
 		72130FFA2BF00FBD00691AED /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "Bit Slicer/ru.lproj/[Code] Edit Variable Address.strings"; sourceTree = "<group>"; };
 		721594FD24DF36360027F600 /* HexFiend.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexFiend.framework; path = deps/HexFiend/HexFiend.framework; sourceTree = "<group>"; };
-		721594FF24DF36460027F600 /* HFLineCountingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = deps/HexFiend/HFLineCountingView.h; sourceTree = "<group>"; };
 		722CAADE19BB625E009C6AAE /* VariableDisplayTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VariableDisplayTest.m; sourceTree = "<group>"; usesTabs = 1; };
 		722CAAE019BBB5A1009C6AAE /* SearchVirtualMemoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVirtualMemoryTest.m; sourceTree = "<group>"; usesTabs = 1; };
 		722EE74D1B18D8B000934EF3 /* ZGChosenProcessDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGChosenProcessDelegate.h; path = "Bit Slicer/ZGChosenProcessDelegate.h"; sourceTree = "<group>"; };
@@ -345,12 +340,6 @@
 		7231440619C607C700FBE342 /* ZGWatchVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGWatchVariable.h; path = "Bit Slicer/ZGWatchVariable.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7231440719C607C700FBE342 /* ZGWatchVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGWatchVariable.m; path = "Bit Slicer/ZGWatchVariable.m"; sourceTree = "<group>"; usesTabs = 1; };
 		7231440D19C6230F00FBE342 /* en */ = {isa = PBXFileReference; lastKnownFileType = text; name = en; path = "Bit Slicer/en.lproj/[Code] Watch Variable.stringsdict"; sourceTree = "<group>"; };
-		7235B79F24D7BF650029580A /* udis86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = udis86.h; path = deps/udis86/udis86/udis86.h; sourceTree = "<group>"; };
-		7235B7A024D7BF770029580A /* extern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = extern.h; path = deps/udis86/udis86/libudis86/extern.h; sourceTree = "<group>"; };
-		7235B7A124D7BF770029580A /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = deps/udis86/udis86/libudis86/types.h; sourceTree = "<group>"; };
-		7235B7A224D7BF770029580A /* itab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = itab.h; path = deps/udis86/udis86/libudis86/itab.h; sourceTree = "<group>"; };
-		7235B7A324D7BF980029580A /* libudis86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libudis86.a; path = deps/udis86/udis86/libudis86.a; sourceTree = "<group>"; };
-		7235B7A524D7C1050029580A /* yasm */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = yasm; path = deps/yasm/yasm; sourceTree = "<group>"; };
 		7235B7AE24D7CE0B0029580A /* ShortcutRecorder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ShortcutRecorder.framework; path = deps/ShortcutRecorder/ShortcutRecorder.framework; sourceTree = "<group>"; };
 		7235B7B124D7D9B10029580A /* DDMathParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DDMathParser.framework; path = deps/DDMathParser/DDMathParser.framework; sourceTree = "<group>"; };
 		7235B7B724D7DD8C0029580A /* pythonlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pythonlib.h; path = "Bit Slicer/pythonlib.h"; sourceTree = "<group>"; };
@@ -465,12 +454,10 @@
 		72AA79811A23FDDF005A9BD6 /* ZGScriptPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGScriptPrompt.h; path = "Bit Slicer/ZGScriptPrompt.h"; sourceTree = "<group>"; usesTabs = 1; };
 		72AA79821A23FDDF005A9BD6 /* ZGScriptPrompt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGScriptPrompt.m; path = "Bit Slicer/ZGScriptPrompt.m"; sourceTree = "<group>"; usesTabs = 1; };
 		72AA79841A2413B4005A9BD6 /* ZGScriptPromptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGScriptPromptDelegate.h; path = "Bit Slicer/ZGScriptPromptDelegate.h"; sourceTree = "<group>"; usesTabs = 1; };
-		72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGX86DisassemblerObject.m; path = "Bit Slicer/ZGX86DisassemblerObject.m"; sourceTree = "<group>"; };
-		72ABCBE624E8D00E00EF63A9 /* ZGX86DisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGX86DisassemblerObject.h; path = "Bit Slicer/ZGX86DisassemblerObject.h"; sourceTree = "<group>"; };
 		72ABCBE724E8D0B900EF63A9 /* ZGDisassemblerObjectProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGDisassemblerObjectProtocol.h; path = "Bit Slicer/ZGDisassemblerObjectProtocol.h"; sourceTree = "<group>"; };
 		72ABCBE924E8D7D700EF63A9 /* Capstone.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Capstone.framework; path = deps/capstone/Capstone.framework; sourceTree = "<group>"; };
-		72ABCBEC24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGARM64DisassemblerObject.h; path = "Bit Slicer/ZGARM64DisassemblerObject.h"; sourceTree = "<group>"; };
-		72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGARM64DisassemblerObject.m; path = "Bit Slicer/ZGARM64DisassemblerObject.m"; sourceTree = "<group>"; };
+		72ABCBEC24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZGCapstoneDisassemblerObject.h; path = "Bit Slicer/ZGCapstoneDisassemblerObject.h"; sourceTree = "<group>"; };
+		72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ZGCapstoneDisassemblerObject.m; path = "Bit Slicer/ZGCapstoneDisassemblerObject.m"; sourceTree = "<group>"; };
 		72ABCBEF24E9DE9000EF63A9 /* libkeystone.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libkeystone.0.dylib; path = deps/keystone/libkeystone.0.dylib; sourceTree = "<group>"; };
 		72ABCBF524E9DF4A00EF63A9 /* hexagon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hexagon.h; path = deps/keystone/keystone/hexagon.h; sourceTree = "<group>"; };
 		72ABCBF624E9DF4A00EF63A9 /* keystone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keystone.h; path = deps/keystone/keystone/keystone.h; sourceTree = "<group>"; };
@@ -640,7 +627,7 @@
 		77607AB0185CD50100AC532B /* AGScopeBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGScopeBar.m; path = deps/AGScopeBar.m; sourceTree = "<group>"; usesTabs = 1; };
 		7761651920D78EE400E4EF51 /* Bit Slicer Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bit Slicer Debug.entitlements"; path = "Bit Slicer/Bit Slicer Debug.entitlements"; sourceTree = "<group>"; };
 		7767CB5A20D62D1900C773F0 /* Bit Slicer Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bit Slicer Release.entitlements"; path = "Bit Slicer/Bit Slicer Release.entitlements"; sourceTree = "<group>"; };
-		7768063E18B96A64007F2CAF /* ZGThreadStates.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ZGThreadStates.c; path = "Bit Slicer/ZGThreadStates.c"; sourceTree = "<group>"; usesTabs = 1; };
+		7768063E18B96A64007F2CAF /* ZGThreadStates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGThreadStates.m; path = "Bit Slicer/ZGThreadStates.m"; sourceTree = "<group>"; usesTabs = 1; };
 		7768063F18B96A64007F2CAF /* ZGThreadStates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGThreadStates.h; path = "Bit Slicer/ZGThreadStates.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7768064118B9A36E007F2CAF /* ZGBacktrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGBacktrace.h; path = "Bit Slicer/ZGBacktrace.h"; sourceTree = "<group>"; usesTabs = 1; };
 		7768064218B9A36E007F2CAF /* ZGBacktrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGBacktrace.m; path = "Bit Slicer/ZGBacktrace.m"; sourceTree = "<group>"; usesTabs = 1; };
@@ -797,7 +784,6 @@
 				7235B7B224D7D9B10029580A /* DDMathParser.framework in Frameworks */,
 				721594FE24DF36360027F600 /* HexFiend.framework in Frameworks */,
 				72ABCBEA24E8D7D700EF63A9 /* Capstone.framework in Frameworks */,
-				7235B7A424D7BF980029580A /* libudis86.a in Frameworks */,
 				7278DC041E4A967700C37150 /* Sparkle.framework in Frameworks */,
 				7235B7AF24D7CE0B0029580A /* ShortcutRecorder.framework in Frameworks */,
 				773E8B021821DDAD00D1A71A /* CoreSymbolication.framework in Frameworks */,
@@ -869,7 +855,6 @@
 			isa = PBXGroup;
 			children = (
 				72A360522E9DF9BF00E7C8AD /* bitslicericon.icon */,
-				7235B7A524D7C1050029580A /* yasm */,
 				77F115AC17D2EAE4009E002A /* bitslicerdocicon.iconset */,
 				77F115B017D2EAF3009E002A /* Bit_Slicer-Info.plist */,
 				72DBC8EF1B7657F20092ED75 /* LICENSE */,
@@ -909,18 +894,6 @@
 				72E07FDA2AA563AF00BBEED1 /* LEB128Type.m */,
 			);
 			name = "Data Inspector";
-			sourceTree = "<group>";
-		};
-		7235B79E24D7BE9C0029580A /* udis86 */ = {
-			isa = PBXGroup;
-			children = (
-				7235B7A324D7BF980029580A /* libudis86.a */,
-				7235B79F24D7BF650029580A /* udis86.h */,
-				7235B7A024D7BF770029580A /* extern.h */,
-				7235B7A224D7BF770029580A /* itab.h */,
-				7235B7A124D7BF770029580A /* types.h */,
-			);
-			name = udis86;
 			sourceTree = "<group>";
 		};
 		72ABCBF424E9DF3E00EF63A9 /* keystone */ = {
@@ -1093,7 +1066,6 @@
 				72ABCBF424E9DF3E00EF63A9 /* keystone */,
 				773E8B0B1821E01700D1A71A /* Symbolication */,
 				7701EF411696A29100877373 /* mach_exc */,
-				7235B79E24D7BE9C0029580A /* udis86 */,
 				77F1163E17D2EF9E009E002A /* ZGDebuggerController.h */,
 				77F1163F17D2EF9E009E002A /* ZGDebuggerController.m */,
 				779C6CC118E7309B0076D647 /* ZGDebuggerUtilities.h */,
@@ -1109,10 +1081,8 @@
 				72ABCBE724E8D0B900EF63A9 /* ZGDisassemblerObjectProtocol.h */,
 				77F1164117D2EFB4009E002A /* ZGDisassemblerObject.h */,
 				77F1164217D2EFB4009E002A /* ZGDisassemblerObject.m */,
-				72ABCBE624E8D00E00EF63A9 /* ZGX86DisassemblerObject.h */,
-				72ABCBE424E8CFF300EF63A9 /* ZGX86DisassemblerObject.m */,
-				72ABCBEC24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.h */,
-				72ABCBED24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m */,
+				72ABCBEC24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.h */,
+				72ABCBED24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m */,
 				77F1164417D2EFBD009E002A /* ZGInstruction.h */,
 				77F1164517D2EFBD009E002A /* ZGInstruction.m */,
 				770F283B18827D1B001B828C /* ZGBreakPointConditionViewController.h */,
@@ -1204,7 +1174,6 @@
 				77F115D217D2ED82009E002A /* ZGStatusBarRepresenter.m */,
 				77F115D417D2ED8E009E002A /* ZGLineCountingRepresenter.h */,
 				77F115D517D2ED8E009E002A /* ZGLineCountingRepresenter.m */,
-				721594FF24DF36460027F600 /* HFLineCountingView.h */,
 				77F115D717D2ED9D009E002A /* ZGLineCountingView.h */,
 				77F115D817D2ED9D009E002A /* ZGLineCountingView.m */,
 			);
@@ -1339,7 +1308,7 @@
 				7789C379189A570F00F1FDAF /* ZGMachBinaryInfo.h */,
 				7789C37A189A570F00F1FDAF /* ZGMachBinaryInfo.m */,
 				7768063F18B96A64007F2CAF /* ZGThreadStates.h */,
-				7768063E18B96A64007F2CAF /* ZGThreadStates.c */,
+				7768063E18B96A64007F2CAF /* ZGThreadStates.m */,
 			);
 			name = "Virtual Memory";
 			sourceTree = "<group>";
@@ -1476,6 +1445,7 @@
 						TestTargetID = 8D15AC270486D014006FF6A4;
 					};
 					8D15AC270486D014006FF6A4 = {
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -1651,14 +1621,14 @@
 				77607AB1185CD50100AC532B /* AGScopeBar.m in Sources */,
 				77F115E217D2EDC3009E002A /* ZGAppController.m in Sources */,
 				726B7CA91A23F0EE004354BC /* ZGScriptPromptWindowController.m in Sources */,
-				7768064018B96A64007F2CAF /* ZGThreadStates.c in Sources */,
+				7768064018B96A64007F2CAF /* ZGThreadStates.m in Sources */,
 				77F115E517D2EDCD009E002A /* ZGPreferencesController.m in Sources */,
 				77F115E817D2EDD9009E002A /* ZGProcessList.m in Sources */,
 				77F115EB17D2EDE3009E002A /* ZGRunningProcess.m in Sources */,
 				77F115EE17D2EDEE009E002A /* ZGRunningProcessObserver.m in Sources */,
 				77F115F117D2EDF9009E002A /* ZGDocument.m in Sources */,
 				72DBC8D51B71A4BB0092ED75 /* ZGRootlessConfiguration.m in Sources */,
-				72ABCBEE24E8DB9900EF63A9 /* ZGARM64DisassemblerObject.m in Sources */,
+				72ABCBEE24E8DB9900EF63A9 /* ZGCapstoneDisassemblerObject.m in Sources */,
 				72D72BCB1AB3E9FA005044CF /* ZGLocalization.m in Sources */,
 				77F115F417D2EE0B009E002A /* ZGDocumentData.m in Sources */,
 				720844FD24E072DB00F3D449 /* DataInspectorScrollView.m in Sources */,
@@ -1734,7 +1704,6 @@
 				77F1165017D2EFE4009E002A /* ZGDebugThread.m in Sources */,
 				77E9DBCE181F812E009F4982 /* ZGMachBinary.m in Sources */,
 				7257EFF31B87EF220045991F /* OSCSingleThreadQueue.m in Sources */,
-				72ABCBE524E8CFF300EF63A9 /* ZGX86DisassemblerObject.m in Sources */,
 				77F1165917D2F001009E002A /* ZGRegister.m in Sources */,
 				774B5EE61915361400D7AA69 /* ZGPyKeyCodeModule.m in Sources */,
 				7231440819C607C700FBE342 /* ZGWatchVariable.m in Sources */,
@@ -2424,7 +2393,6 @@
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zgcoder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -2514,7 +2482,6 @@
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zgcoder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -2543,6 +2510,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = bitslicericon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2572,8 +2543,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Bit Slicer/Bit Slicer Debug.entitlements";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2617,15 +2590,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/deps/udis86/udis86",
 					"$(PROJECT_DIR)/deps/keystone",
 				);
 				OTHER_CFLAGS = "-D_BSDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zgcoder.BitSlicer;
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 				WARNING_CFLAGS = (
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
@@ -2658,6 +2630,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = bitslicericon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2687,11 +2663,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Bit Slicer/Bit Slicer Release.entitlements";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = ZCK58M894E;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2733,14 +2709,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/deps/udis86/udis86",
 					"$(PROJECT_DIR)/deps/keystone",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zgcoder.BitSlicer;
 				PRODUCT_NAME = "Bit Slicer";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 				WARNING_CFLAGS = (
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
@@ -2772,6 +2747,7 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2797,7 +2773,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
@@ -2808,6 +2784,7 @@
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2831,7 +2808,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;

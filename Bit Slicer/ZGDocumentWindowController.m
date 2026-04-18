@@ -729,19 +729,11 @@
 	}
 }
 
-- (void)addFunctionWithSymbolName:(NSString *)symbolName fallbackTitle:(NSString *)fallbackTitle tag:(ZGFunctionType)tag
+- (void)addFunctionWithSymbolName:(NSString *)symbolName tag:(ZGFunctionType)tag
 {
 	NSMenuItem *menuItem = [_functionPopUpButton.menu addItemWithTitle:@"" action:nil keyEquivalent:@""];
 	
-	if (@available(macOS 15, *))
-	{
-		menuItem.image = [NSImage imageWithSystemSymbolName:symbolName accessibilityDescription:@""];
-	}
-	else
-	{
-		menuItem.title = fallbackTitle;
-	}
-	
+	menuItem.image = [NSImage imageWithSystemSymbolName:symbolName accessibilityDescription:@""];
 	menuItem.tag = tag;
 }
 
@@ -823,17 +815,17 @@
 	
 	[_functionPopUpButton removeAllItems];
 	
-	[self addFunctionWithSymbolName:@"equal" fallbackTitle:ZGLocalizableSearchDocumentString(@"equalsOperatorTitle") tag:ZGEquals];
+	[self addFunctionWithSymbolName:@"equal" tag:ZGEquals];
 	
 	if (_documentData.searchType == ZGSearchTypeValue)
 	{
-		[self addFunctionWithSymbolName:@"notequal" fallbackTitle:ZGLocalizableSearchDocumentString(@"notEqualsOperatorTitle") tag:ZGNotEquals];
+		[self addFunctionWithSymbolName:@"notequal" tag:ZGNotEquals];
 		
 		if (dataType != ZGString8 && dataType != ZGString16 && dataType != ZGByteArray)
 		{
-			[self addFunctionWithSymbolName:@"lessthan" fallbackTitle:ZGLocalizableSearchDocumentString(@"lessThanOperatorTitle") tag:ZGLessThan];
+			[self addFunctionWithSymbolName:@"lessthan" tag:ZGLessThan];
 			
-			[self addFunctionWithSymbolName:@"greaterthan" fallbackTitle:ZGLocalizableSearchDocumentString(@"greaterThanOperatorTitle") tag:ZGGreaterThan];
+			[self addFunctionWithSymbolName:@"greaterthan" tag:ZGGreaterThan];
 		}
 	}
 	

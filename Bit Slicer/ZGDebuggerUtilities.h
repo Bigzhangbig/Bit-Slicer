@@ -36,11 +36,7 @@
 
 #include <TargetConditionals.h>
 
-#if TARGET_CPU_ARM64
 extern const uint8_t gBreakpointOpcode[4];
-#else
-extern const uint8_t gBreakpointOpcode[1];
-#endif
 
 @class ZGProcess;
 @class ZGInstruction;

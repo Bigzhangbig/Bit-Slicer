@@ -1,2 +1,8 @@
 Source: https://github.com/capstone-engine/capstone/releases/download/5.0.7/capstone-5.0.7.tar.xz
-Config: Use Xcode project, set macOS deployment target to 11.5, add evm.h to Xcode project (stray reference that wasn't added in capstone/include/; there may be many more, and these need to be added to public headers too). Alter preprocessor macros to only build for arm64 on framework target (CAPSTONE_HAS_ARM64=1). Modify scheme to build for Release.
+Config:
+
+Use Xcode project, set macOS deployment target to 15.6, add evm.h to Xcode project (stray reference that wasn't added in capstone/include/; there may be many more, and these need to be added to public headers too).
+
+Set archs to arm64 arm64e
+
+Alter preprocessor macros to only build for arm64 and x86 on framework target (CAPSTONE_HAS_ARM64=1 CAPSTONE_HAS_X86=1). Modify scheme to build for Release.

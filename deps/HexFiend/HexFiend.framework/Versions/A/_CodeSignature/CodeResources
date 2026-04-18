@@ -6,11 +6,11 @@
 	<dict>
 		<key>Resources/HFModalProgress.nib</key>
 		<data>
-		wkdCawshQCGiqHvdUB/+K6KeC/g=
+		3qMLbDkpa8HzMiykqHvir28Ngxg=
 		</data>
 		<key>Resources/Info.plist</key>
 		<data>
-		4Sjq3lZBKZT1aFcVnydC71aut2Y=
+		6rLNwfIKdZcCwnIQcoeuiofP1Ng=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -19,7 +19,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			sDsq0BdCA/SKe7Gx5QbIZReUExJJKaaN9OUNL2+vABQ=
+			rxhku3WjQy2EyIVFV9k3P/3TOSSrk/EH6JW8Ao/V52Q=
 			</data>
 		</dict>
 		<key>Headers/HFAttributedByteArray.h</key>
@@ -61,7 +61,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			PYQBJfkIICl/W8Ze0ZhBDk42vIyeP7dvBeOm6qD+HcY=
+			HGhcGZkkPilbH4xiF3Ir/GgdCAOC4TWfKiIkOQ6rnhY=
 			</data>
 		</dict>
 		<key>Headers/HFByteRangeAttribute.h</key>
@@ -85,11 +85,11 @@
 			MsfE2kTs4YNNXfOQzz1dPIxoTG7y6056jj8o5Dcx744=
 			</data>
 		</dict>
-		<key>Headers/HFByteThemeColor.h</key>
+		<key>Headers/HFByteTheme.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			i5fVSK9W3P61XcmkbsGB7cvFmaePWKwHhb30zfAUOMI=
+			T2yMP5a0XHRiM9nusRjRcdEPM8Li+hMRmXZpkebl63I=
 			</data>
 		</dict>
 		<key>Headers/HFCancelButton.h</key>
@@ -117,21 +117,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			c+7ut6Ov+U3AkAdaRIse1SInNJGUPO+eQ7V3XxZIeBQ=
+			plwKCNi4vCKCl+Ge5ov7VitcMdn1sSXVX6hS1+1D4BY=
 			</data>
 		</dict>
 		<key>Headers/HFCustomEncoding.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			1J+4JkAQrPzl5n9+eC9HRu1fSOCwtzBrFG0oq2yhJO8=
+			R0DAaDoJbKkfu5ccsDQ89Bc8UxABqu4rJsQuJhmW//0=
 			</data>
 		</dict>
 		<key>Headers/HFEncodingManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			0w9y7Yqb+u66MXfZTFcuCEKg6VPzcCH6T1Q9lwmrEC8=
+			6EcldCAKvVPDqwZdh+DSZ5ouBIVeC6XumQrJTwZFycc=
 			</data>
 		</dict>
 		<key>Headers/HFFastMemchr.h</key>
@@ -152,14 +152,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Bp+Se7fr1Z6gP0QO8vHudVn9XoKl2usDB9ILTXvV7RU=
+			No6ItC64sBXBEk2xXSjMBRY3AKMefEO9n37SB0S7b0o=
 			</data>
 		</dict>
 		<key>Headers/HFFrameworkPrefix.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			iJwg45gAmJoeOvcBDOk8uTqVwsH0d/oCPK2dJ3Js/PU=
+			Rtqd2FOPknWnTjXW1XkaAOxNgaFe6KizFAumxTU505I=
 			</data>
 		</dict>
 		<key>Headers/HFFullMemoryByteArray.h</key>
@@ -180,7 +180,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			n6GoQPPIb1BHF1es9HNJsC5anP5EnLTcpnIsbtMVuaw=
+			SO11ZZ+W1JCeTNRkBzyvuuT8GemL9yBvODPAebsLgQE=
 			</data>
 		</dict>
 		<key>Headers/HFGlyphTrie.h</key>
@@ -215,7 +215,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			GvKCgTIz2+zngTzbT/HPgi0yX59PVmFaIxVe3SgZ9lU=
+			lK7B7rOjB0gxnNC0YX7TiV/e+6beuW+za/tICJw2y2M=
 			</data>
 		</dict>
 		<key>Headers/HFLineCountingRepresenter.h</key>
@@ -246,6 +246,13 @@
 			tdQuCxw/VzN0fN/wBVAikY3xTWySdp2YSzTt8hcTMrg=
 			</data>
 		</dict>
+		<key>Headers/HFPrivilegedHelper.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EaM/YwobHepttXnsoBNWriq2SZWDh/X7SgUKzHZFNMI=
+			</data>
+		</dict>
 		<key>Headers/HFProgressTracker.h</key>
 		<dict>
 			<key>hash2</key>
@@ -257,7 +264,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			S1j5xuT5WfmH0m7v80xRrR9GJBjZC8F9USzq20G/5/g=
+			J8r88+wlkyeKezkvuw6+spqoF+XfQpUweRf7Bj+piXU=
+			</data>
+		</dict>
+		<key>Headers/HFRepresenterHexTextView.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W98R1wmcu7tiEfSW8kyH8kOmppst0Dml/BYdGa1/pUU=
 			</data>
 		</dict>
 		<key>Headers/HFRepresenterTextView.h</key>
@@ -295,6 +309,13 @@
 			95CQfxteJAcYtOqKXoquBxjZyt3whlQxy0Bq/4rlDTo=
 			</data>
 		</dict>
+		<key>Headers/HFTextDividerRepresenter.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			D3o74Hqi79CRLBKAC6ujN7892xPmaMP+gbLdKm5Pp0o=
+			</data>
+		</dict>
 		<key>Headers/HFTextField.h</key>
 		<dict>
 			<key>hash2</key>
@@ -306,14 +327,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nVrkvbUN8q7G/nqnXjpBUBxvefYdzc+QsepXhsHZ0u0=
+			kHims+HHku+86v+h90XoYEKd6QKBGjhuMKbpjyVJE5A=
 			</data>
 		</dict>
 		<key>Headers/HFTextView.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ShHD7L71qCvkMxg1t2H9e9bmI5kRd1D8tnAWkCvn2oA=
+			xOgQokE0PCkP9mqaSW/Ps8hOR7JiGEYcdIHsypXhpzM=
 			</data>
 		</dict>
 		<key>Headers/HFTypes.h</key>
@@ -337,95 +358,32 @@
 			VZtLJQcRX+xdyS6RuPM6PcgQZJu6ax53zbNzKlXJPuw=
 			</data>
 		</dict>
-		<key>Headers/HexFiend-Swift.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			M1odCIYETnAZ8J5B3rMujWu86SeQuU1itqIIZUsYDJw=
-			</data>
-		</dict>
 		<key>Headers/HexFiend.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			I7Kato0jaSHCYBO1WCF2vno28ZgHQRf2J4P+aLoLDfY=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			L6V2YUl9sD2n2wFKhDJ5QdUk/d8m4TT0DWgrGxSn5o0=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			gYuwIhEL7oW+HLUE6PnxXPvzic+qFf2H/4zz+Gg5jFQ=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/arm64-apple-macos.abi.json</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KnRdWE4y6t4QM5zi5JDptPdHFgJy1Tku+7GLkZS2aNM=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/arm64-apple-macos.swiftdoc</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			Fc2HTfbnMXXlwqB9FBJXLhiFSWnjhwttn7yIbpmZiRc=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/arm64-apple-macos.swiftmodule</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			9pjajrIzf2g3TyrhBFdJ8iFqWbwO3sCzXhUVs2ydCpQ=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/x86_64-apple-macos.abi.json</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KnRdWE4y6t4QM5zi5JDptPdHFgJy1Tku+7GLkZS2aNM=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/x86_64-apple-macos.swiftdoc</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			F9otYhgM/36EAyNaAvdqJDrGdzZ6AWBhDKGz2jj3Fd8=
-			</data>
-		</dict>
-		<key>Modules/HexFiend.swiftmodule/x86_64-apple-macos.swiftmodule</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			ehtDQ7IX9WAiy97Ta1ON0LgJF/JmxsW+sSq+AJJOZMY=
+			rh7+/Bg2RQqOWcxHZoQ4DRQwfcsKpFehweQUfFiB3ho=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			fn6fyQR8gG2TJEDp3BRq6QaS31Bd+WQziUlJlLWUaSY=
+			GnM0izrAKkVABYk6DUKf4ySK2+aZZkpr5QcmyPJJ6s4=
 			</data>
 		</dict>
 		<key>Resources/HFModalProgress.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			EvHiyZ6TD72mGYDQecYl8h9dqBsNZNHdMLGrMAsHiXk=
+			jKjIHIGYVTAxT3cKbxJyU7tuT9uJZ1wpR4+F2mNg5Vw=
 			</data>
 		</dict>
 		<key>Resources/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			gYEQsnpLYRjI8WfXxHdJDbFqUQJod6myCe6fl7NE5w4=
+			UNnbREJULdlQY7JQdKI45W3guNC7qZ4ZHMDM5eiBBBw=
 			</data>
 		</dict>
 	</dict>

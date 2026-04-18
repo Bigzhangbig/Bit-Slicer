@@ -71,7 +71,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) PyObject *condition;
 @property (nonatomic, nullable) PyObject *callback;
 @property (nonatomic, nullable) NSError *error;
-@property (nonatomic) ZGMemoryProtection originalProtection;
 @property (nonatomic) ZGRegistersState *registersState;
 @property (nonatomic) BOOL emulated;
 
