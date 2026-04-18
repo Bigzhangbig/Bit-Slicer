@@ -121,7 +121,7 @@ extern void ZGPrepareBoyerMooreSearch(const unsigned char *needle, const unsigne
 	const uint8_t bytes[] = {0x00, 0xB1};
 	NSUInteger numberOfResults = 0;
 	XCTAssertTrue([self searchAndVerifyBytes:bytes length:sizeof(bytes) getNumberOfResults:&numberOfResults]);
-	XCTAssertEqual(numberOfResults, 3U);
+	XCTAssertEqual(numberOfResults, 4U);
 }
 
 - (void)testOneByteResults
@@ -129,7 +129,7 @@ extern void ZGPrepareBoyerMooreSearch(const unsigned char *needle, const unsigne
 	const uint8_t bytes[] = {0xA1};
 	NSUInteger numberOfResults = 0;
 	XCTAssertTrue([self searchAndVerifyBytes:bytes length:sizeof(bytes) getNumberOfResults:&numberOfResults]);
-	XCTAssertEqual(numberOfResults, 85U);
+	XCTAssertEqual(numberOfResults, 344U);
 }
 
 - (void)testNearEndOfData
