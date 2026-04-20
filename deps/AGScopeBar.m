@@ -127,10 +127,11 @@ static CGFloat colorValue(CGFloat value, BOOL invert)
 		BOOL invertColors;
 #if defined(MAC_OS_X_VERSION_10_14) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 		if (@available(macOS 10.14, *)) {
-			// Borrowing how HexFiend detects dark mode
-			invertColors = [NSAppearance.currentAppearance.name isEqualToString:NSAppearanceNameDarkAqua];
+			NSAppearance *drawingAppearance = NSAppearance.currentDrawingAppearance;
+			NSAppearanceName matchedName = [drawingAppearance bestMatchFromAppearancesWithNames:@[NSAppearanceNameAqua, NSAppearanceNameDarkAqua]];
+			invertColors = [matchedName isEqualToString:NSAppearanceNameDarkAqua];
 			[currentAppearance release];
-			currentAppearance = [NSAppearance.currentAppearance retain];
+			currentAppearance = [drawingAppearance retain];
 		} else {
 			invertColors = NO;
 		}
@@ -469,8 +470,13 @@ static CGFloat colorValue(CGFloat value, BOOL invert)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
 	// currentAppearance != nil only if we're on at least 10.14
-	if (currentAppearance != nil && ![currentAppearance.name isEqualToString:NSAppearance.currentAppearance.name]) {
-		[self updateAppearance];
+	if (currentAppearance != nil) {
+		NSArray *names = @[NSAppearanceNameAqua, NSAppearanceNameDarkAqua];
+		NSAppearanceName storedMatch = [currentAppearance bestMatchFromAppearancesWithNames:names];
+		NSAppearanceName currentMatch = [NSAppearance.currentDrawingAppearance bestMatchFromAppearancesWithNames:names];
+		if (storedMatch == nil || currentMatch == nil || ![storedMatch isEqualToString:currentMatch]) {
+			[self updateAppearance];
+		}
 	}
 #pragma clang diagnostic pop
 	
