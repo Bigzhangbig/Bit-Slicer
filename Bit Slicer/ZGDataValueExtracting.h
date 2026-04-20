@@ -41,6 +41,6 @@ void * _Nullable ZGValueFromString(ZGProcessType processType, NSString *stringVa
 void * _Nullable ZGSwappedValue(ZGProcessType processType, const void *value, ZGVariableType dataType, ZGMemorySize dataSize);
 
 NSArray<NSString *> *ZGByteArrayComponentsFromString(NSString *searchString);
-unsigned char * _Nullable ZGAllocateFlagsForByteArrayWildcards(NSString *searchValue);
+unsigned char * _Nullable ZGCreateFlagsForByteArrayWildcards(NSString *searchValue);
 
 NS_ASSUME_NONNULL_END

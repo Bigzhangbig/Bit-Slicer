@@ -36,8 +36,6 @@
 #include <stdint.h>
 #include <TargetConditionals.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wfixed-enum-extension"
 typedef enum : int8_t
 {
 	ZGProcessTypeNone = 0,
@@ -45,7 +43,6 @@ typedef enum : int8_t
 	ZGProcessTypeX86_64,
 	ZGProcessTypeARM64
 } ZGProcessType;
-#pragma clang diagnostic pop
 
 #define ZG_PROCESS_TYPE_IS_64_BIT(processType) (processType == ZGProcessTypeX86_64 || processType == ZGProcessTypeARM64)
 

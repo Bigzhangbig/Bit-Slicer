@@ -235,7 +235,7 @@ do { \
 		 size:entry->size
 		 address:0
 		 type:ZGByteArray
-		 qualifier:0
+		 qualifier:(ZGVariableQualifier)0
 		 pointerSize:ZG_PROCESS_POINTER_SIZE(processType)
 		 description:[[NSAttributedString alloc] initWithString:ZGUnwrapNullableObject(@(entry->name))]];
 		
@@ -260,7 +260,7 @@ do { \
 		 size:entry->size
 		 address:0
 		 type:ZGByteArray
-		 qualifier:0
+		 qualifier:(ZGVariableQualifier)0
 		 pointerSize:ZG_PROCESS_POINTER_SIZE(processType)
 		 description:[[NSAttributedString alloc] initWithString:ZGUnwrapNullableObject(@(entry->name))]];
 		

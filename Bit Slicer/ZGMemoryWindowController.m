@@ -730,7 +730,7 @@ static ZGProcess *ZGGrantMemoryAccessToProcess(ZGProcessTaskManager *processTask
 	}
 	else if (userInterfaceItem.action == @selector(pauseProcessWhenInactive:))
 	{
-		menuItem.state = _isWatchingActiveProcess ? NSControlStateValueOn : NSControlStateValueOff;;
+		menuItem.state = _isWatchingActiveProcess ? NSControlStateValueOn : NSControlStateValueOff;
 		
 		if (!_currentProcess.valid)
 		{

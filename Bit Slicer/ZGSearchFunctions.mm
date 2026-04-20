@@ -249,7 +249,7 @@ static ZGMemorySize ZGPageSizeForRegionAlignment(ZGMemoryMap processTask, BOOL t
 @end
 
 #define INITIAL_BUFFER_ADDRESSES_CAPACITY 4096U
-#define REALLOCATION_GROWTH_RATE 1.5f
+#define REALLOCATION_GROWTH_RATE 1.5
 
 template <typename T>
 bool ZGByteArrayNotEquals(ZGSearchData *__unsafe_unretained searchData, T *__restrict__ variableValue, T *__restrict__ compareValue, T *__restrict__ extraStorage);
@@ -536,7 +536,7 @@ NSData *ZGSearchWithFunctionHelperRegular(T *searchValue, F comparisonFunction, 
 	{
 		if (numberOfVariablesFound == addressCapacity)
 		{
-			addressCapacity = static_cast<size_t>(addressCapacity * REALLOCATION_GROWTH_RATE);
+			addressCapacity = static_cast<size_t>(static_cast<double>(addressCapacity) * REALLOCATION_GROWTH_RATE);
 			memoryAddresses = static_cast<P *>(realloc(memoryAddresses, addressCapacity * sizeof(*memoryAddresses)));
 		}
 		
@@ -570,7 +570,7 @@ NSData *ZGSearchWithFunctionHelperRegularAndStoreValueDifference(T *searchValue,
 	{
 		if (numberOfVariablesFound == capacity)
 		{
-			capacity = static_cast<size_t>(capacity * REALLOCATION_GROWTH_RATE);
+			capacity = static_cast<size_t>(static_cast<double>(capacity) * REALLOCATION_GROWTH_RATE);
 			results = static_cast<uint8_t *>(realloc(results, capacity * resultSize));
 		}
 		
@@ -613,7 +613,7 @@ NSData *ZGSearchWithFunctionHelperStored(void *regionBytes, F comparisonFunction
 	{
 		if (numberOfVariablesFound == addressCapacity)
 		{
-			addressCapacity = static_cast<size_t>(addressCapacity * REALLOCATION_GROWTH_RATE);
+			addressCapacity = static_cast<size_t>(static_cast<double>(addressCapacity) * REALLOCATION_GROWTH_RATE);
 			memoryAddresses = static_cast<P *>(realloc(memoryAddresses, addressCapacity * sizeof(*memoryAddresses)));
 		}
 		
@@ -711,7 +711,7 @@ static BOOL searchUsesExtraStorage(ZGSearchData *searchData, ZGVariableType data
 			{
 				*requiresCopy = NO;
 			}
-			return searchData.bytesSwapped && searchData.shouldIgnoreStringCase;;
+			return searchData.bytesSwapped && searchData.shouldIgnoreStringCase;
 		}
 		// Invalid inputs
 		case ZGScript:
@@ -2589,7 +2589,7 @@ ZGSearchResults *ZGSearchForIndirectPointer(ZGMemoryMap processTask, ZGSearchDat
 	NSMutableArray<NSMutableData *> *staticOtherLibrariesResultSets = [NSMutableArray array];
 	
 	{
-		ZGMemoryAddress searchAddress = *(static_cast<ZGMemoryAddress *>(searchData.searchValue));;
+		ZGMemoryAddress searchAddress = *(static_cast<ZGMemoryAddress *>(searchData.searchValue));
 		
 		NSArray<NSData *> *previousIndirectResultSets;
 		ZGMemorySize previousIndirectResultSetStride;

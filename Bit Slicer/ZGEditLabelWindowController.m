@@ -184,7 +184,7 @@
 		}
 		else
 		{
-			NSRange digitsRange = [firstVariableLabel rangeOfCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet options:NSBackwardsSearch | NSLiteralSearch];
+			NSRange digitsRange = [firstVariableLabel rangeOfCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet options:(NSStringCompareOptions)(NSBackwardsSearch | NSLiteralSearch)];
 			
 			if (digitsRange.location != NSNotFound)
 			{
@@ -217,7 +217,7 @@
 	
 	NSString *newRequestedLabel = _labelTextField.stringValue;
 	
-	NSRange ordinalRange = [newRequestedLabel rangeOfString:@"$n" options:NSBackwardsSearch | NSLiteralSearch];
+	NSRange ordinalRange = [newRequestedLabel rangeOfString:@"$n" options:(NSStringCompareOptions)(NSBackwardsSearch | NSLiteralSearch)];
 	
 	BOOL changedVariables = NO;
 	NSUInteger variableCount = _variables.count;

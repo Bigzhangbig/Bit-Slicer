@@ -230,7 +230,7 @@
 
 - (void)updateMemoryStoreUserInterface:(NSTimer *)__unused timer
 {
-	_windowController.progressIndicator.doubleValue = _searchProgress.progress;
+	_windowController.progressIndicator.doubleValue = (double)_searchProgress.progress;
 }
 
 - (NSString *)numberOfVariablesFoundDescriptionFromProgress:(ZGSearchProgress *)searchProgress
@@ -467,7 +467,7 @@
 					
 					if (offset == 0x0)
 					{
-						addressFormula = [NSString stringWithFormat:@"[%@]", addressFormula];;
+						addressFormula = [NSString stringWithFormat:@"[%@]", addressFormula];
 					}
 					else if (offset > 0x0)
 					{
@@ -751,7 +751,7 @@
 		if (dataType == ZGByteArray)
 		{
 			// If this returns NULL, then there just were no wildcards
-			_searchData.byteArrayFlags = ZGAllocateFlagsForByteArrayWildcards(finalSearchExpression);
+			_searchData.byteArrayFlags = ZGCreateFlagsForByteArrayWildcards(finalSearchExpression);
 		}
 	}
 	else
@@ -1305,7 +1305,7 @@
 			else
 			{
 				// Narrow value search involving indirect variables
-				self->_temporarySearchResults = ZGNarrowIndirectSearchForData(currentProcess.processTask, currentProcess.translated, self->_searchData, self, dataType, self->_documentData.qualifierTag, self->_functionType, initialIndirectSearchResults);
+				self->_temporarySearchResults = ZGNarrowIndirectSearchForData(currentProcess.processTask, currentProcess.translated, self->_searchData, self, dataType, (ZGVariableQualifier)self->_documentData.qualifierTag, self->_functionType, initialIndirectSearchResults);
 			}
 		}
 		else if (!isNarrowingSearch)
@@ -1316,7 +1316,7 @@
 		else
 		{
 			// Regular Narrow value search
-			self->_temporarySearchResults = ZGNarrowSearchForData(currentProcess.processTask, currentProcess.translated, self->_searchData, self, dataType, self->_documentData.qualifierTag, self->_functionType, firstSearchResults, (previousSearchResults.dataType == dataType && currentProcess.pointerSize == previousSearchResults.stride) ? previousSearchResults : nil);
+			self->_temporarySearchResults = ZGNarrowSearchForData(currentProcess.processTask, currentProcess.translated, self->_searchData, self, dataType, (ZGVariableQualifier)self->_documentData.qualifierTag, self->_functionType, firstSearchResults, (previousSearchResults.dataType == dataType && currentProcess.pointerSize == previousSearchResults.stride) ? previousSearchResults : nil);
 		}
 		
 		dispatch_async(dispatch_get_main_queue(), ^{

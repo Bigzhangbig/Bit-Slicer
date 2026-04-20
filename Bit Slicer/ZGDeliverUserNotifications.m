@@ -38,9 +38,9 @@
 
 void ZGInitializeDeliveredNotificationCategories(void)
 {
-	UNTextInputNotificationAction *textInputNotificationAction = [UNTextInputNotificationAction actionWithIdentifier:@"REPLY_ACTION" title:ZGLocalizedStringFromNotificationsTable(@"notificationReplyButtonTitle") options:0 textInputButtonTitle:ZGLocalizedStringFromNotificationsTable(@"notificationSendButtonTitle") textInputPlaceholder:@""];
+	UNTextInputNotificationAction *textInputNotificationAction = [UNTextInputNotificationAction actionWithIdentifier:@"REPLY_ACTION" title:ZGLocalizedStringFromNotificationsTable(@"notificationReplyButtonTitle") options:(UNNotificationActionOptions)0 textInputButtonTitle:ZGLocalizedStringFromNotificationsTable(@"notificationSendButtonTitle") textInputPlaceholder:@""];
 	
-	UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:ZGUserNotificationScriptReplyCategory actions:@[textInputNotificationAction] intentIdentifiers:@[] options:0];
+	UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:ZGUserNotificationScriptReplyCategory actions:@[textInputNotificationAction] intentIdentifiers:@[] options:(UNNotificationCategoryOptions)0];
 	
 	UNUserNotificationCenter *notificationCenter = [UNUserNotificationCenter currentNotificationCenter];
 	[notificationCenter setNotificationCategories:[NSSet setWithObject:category]];

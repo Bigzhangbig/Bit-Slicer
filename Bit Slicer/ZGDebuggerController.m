@@ -977,7 +977,7 @@ static ZGHotKey *_decodeHotKeyForKey(NSString *keyValue)
 
 - (IBAction)changeDisassemblerMode:(id)sender
 {
-	ZGDisassemblerMode requestedDisassemblerMode = [(NSMenuItem *)sender tag];
+	ZGDisassemblerMode requestedDisassemblerMode = (ZGDisassemblerMode)[(NSMenuItem *)sender tag];
 	if (requestedDisassemblerMode != _currentDisassemblerMode)
 	{
 		_currentDisassemblerMode = requestedDisassemblerMode;

@@ -159,7 +159,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     
     DataInspector *inspector = inspectors[row];
     if ([ident isEqualToString:kInspectorTypeColumnIdentifier]) {
-        [inspector setType:[object intValue]];
+        [inspector setType:(enum InspectorType_t)[object intValue]];
         [tableView reloadData];
     }
     else if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {

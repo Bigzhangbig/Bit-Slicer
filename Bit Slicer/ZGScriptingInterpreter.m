@@ -296,7 +296,7 @@ static PyObject *convertRegisterEntriesToPyDict(ZGRegisterEntry *registerEntries
 		}
 		else
 		{
-			registerObject = PyBytes_FromStringAndSize(value, (long)registerEntry->size);
+			registerObject = PyBytes_FromStringAndSize((const char *)value, (long)registerEntry->size);
 		}
 		
 		if (registerObject != NULL)
@@ -359,7 +359,7 @@ static PyObject *convertRegisterEntriesToPyDict(ZGRegisterEntry *registerEntries
 			if (temporaryResult == -1)
 			{
 				result = NO;
-				evaluateError = [NSError errorWithDomain:@"EvaluateConditionFailure" code:3 userInfo:@{SCRIPT_EVALUATION_ERROR_REASON : @"expression did not evaluate to a boolean value"}];;
+				evaluateError = [NSError errorWithDomain:@"EvaluateConditionFailure" code:3 userInfo:@{SCRIPT_EVALUATION_ERROR_REASON : @"expression did not evaluate to a boolean value"}];
 			}
 			else
 			{

@@ -647,7 +647,7 @@ static ZGBreakPointController *gBreakPointController;
 		{
 			ZGSuspendTask(task);
 			
-			candidateBreakPoint.variable = [[ZGVariable alloc] initWithValue:NULL size:1 address:ZGInstructionPointerFromGeneralThreadState(&threadState, candidateBreakPoint.process.type) type:ZGByteArray qualifier:0 pointerSize:candidateBreakPoint.process.pointerSize];
+			candidateBreakPoint.variable = [[ZGVariable alloc] initWithValue:NULL size:1 address:ZGInstructionPointerFromGeneralThreadState(&threadState, candidateBreakPoint.process.type) type:ZGByteArray qualifier:(ZGVariableQualifier)0 pointerSize:candidateBreakPoint.process.pointerSize];
 			
 			[breakPointsToNotify addObject:candidateBreakPoint];
 			

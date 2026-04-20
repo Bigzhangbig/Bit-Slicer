@@ -155,7 +155,7 @@
 {
 	if (_dylinkerBinary == nil)
 	{
-		_dylinkerBinary = [ZGMachBinary dynamicLinkerMachBinaryInProcess:self];;
+		_dylinkerBinary = [ZGMachBinary dynamicLinkerMachBinaryInProcess:self];
 	}
 	return _dylinkerBinary;
 }

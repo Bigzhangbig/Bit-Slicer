@@ -665,7 +665,7 @@
 	if (!ZGWriteBytes(_processTask, address + 0x21D4, changedBytes, sizeof(changedBytes))) XCTFail(@"Failed to write changed bytes");
 	
 	NSString *wildcardExpression = @"C? ED *F 0D";
-	unsigned char *byteArrayFlags = ZGAllocateFlagsForByteArrayWildcards(wildcardExpression);
+	unsigned char *byteArrayFlags = ZGCreateFlagsForByteArrayWildcards(wildcardExpression);
 	if (byteArrayFlags == NULL) XCTFail(@"Byte array flags is NULL");
 	
 	searchData.byteArrayFlags = byteArrayFlags;

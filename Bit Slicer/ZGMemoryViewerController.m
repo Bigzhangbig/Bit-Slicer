@@ -484,7 +484,7 @@
 			ZGMemoryAddress navigationAddress;
 			ZGMemorySize navigationLength;
 			
-			if (selectionRange.length > 0 && selectionRange.location >= displayedLineRange.location * _textView.controller.bytesPerLine && selectionRange.location + selectionRange.length <= (displayedLineRange.location + displayedLineRange.length) * _textView.controller.bytesPerLine)
+			if (selectionRange.length > 0 && (long double)selectionRange.location >= displayedLineRange.location * (long double)_textView.controller.bytesPerLine && (long double)(selectionRange.location + selectionRange.length) <= (displayedLineRange.location + displayedLineRange.length) * (long double)_textView.controller.bytesPerLine)
 			{
 				// Selection is completely within the user's sight
 				navigationAddress = oldMemoryAddress + selectionRange.location;
@@ -493,7 +493,7 @@
 			else
 			{
 				// Selection not completely within user's sight, use middle of viewer as the point to navigate
-				navigationAddress = oldMemoryAddress + (ZGMemorySize)((displayedLineRange.location + displayedLineRange.length / 2) * _textView.controller.bytesPerLine);
+				navigationAddress = oldMemoryAddress + (ZGMemorySize)((displayedLineRange.location + displayedLineRange.length / 2) * (long double)_textView.controller.bytesPerLine);
 				navigationLength = 0;
 			}
 			
@@ -651,12 +651,12 @@
 	{
 		HFFPRange displayedLineRange = _textView.controller.displayedLineRange;
 		
-		ZGMemoryAddress readAddress = (ZGMemoryAddress)(displayedLineRange.location * _textView.controller.bytesPerLine) + _currentMemoryAddress;
+		ZGMemoryAddress readAddress = (ZGMemoryAddress)(displayedLineRange.location * (long double)_textView.controller.bytesPerLine) + _currentMemoryAddress;
 		
 		if (readAddress >= _currentMemoryAddress && readAddress < _currentMemoryAddress + _currentMemorySize)
 		{
 			// Try to read two extra lines, to make sure we at least get the upper and lower fractional parts.
-			ZGMemorySize readSize = (ZGMemorySize)((displayedLineRange.length + 2) * _textView.controller.bytesPerLine);
+			ZGMemorySize readSize = (ZGMemorySize)((displayedLineRange.length + 2) * (long double)_textView.controller.bytesPerLine);
 			// If we go over in size, resize it to the end
 			if (readAddress + readSize > _currentMemoryAddress + _currentMemorySize)
 			{
@@ -670,7 +670,7 @@
 				HFFullMemoryByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:data];
 				HFByteArray *newByteArray = _textView.controller.byteArray;
 				
-				unsigned long long overwriteLocation = (ZGMemoryAddress)(displayedLineRange.location * _textView.controller.bytesPerLine);
+				unsigned long long overwriteLocation = (ZGMemoryAddress)(displayedLineRange.location * (long double)_textView.controller.bytesPerLine);
 				HFRange replaceRange = HFRangeMake(overwriteLocation, readSize);
 				
 				[newByteArray insertByteSlice:byteSlice inRange:replaceRange];
@@ -702,7 +702,7 @@
 	HFFPRange displayedLineRange = _textView.controller.displayedLineRange;
 	
 	// the line we want to jump to should be in the middle of the view
-	[_textView.controller scrollByLines:offsetLine - displayedLineRange.location - displayedLineRange.length / 2.0L];
+	[_textView.controller scrollByLines:(long double)offsetLine - displayedLineRange.location - displayedLineRange.length / 2.0L];
 	
 	if (selectionLength > 0)
 	{

@@ -17,6 +17,9 @@
 #pragma clang diagnostic ignored "-Wdouble-promotion"
 #pragma clang diagnostic ignored "-Wcast-qual"
 #pragma clang diagnostic ignored "-Wformat"
+#pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
+#pragma clang diagnostic ignored "-Wimplicit-int-enum-cast"
+#pragma clang diagnostic ignored "-Wenum-enum-conversion"
 
 #import "DataInspector.h"
 #import "LEB128Type.h"

@@ -648,7 +648,7 @@ static PyObject *scanSearchData(VirtualMemory *self, ZGSearchData *searchData, c
 	PyObject *retValue = NULL;
 	if (searchData.dataSize > 0)
 	{
-		ZGSearchResults *results = ZGSearchForData(self->processTask, searchData, self->objcSelf, ZGByteArray, 0, ZGEquals);
+		ZGSearchResults *results = ZGSearchForData(self->processTask, searchData, self->objcSelf, ZGByteArray, (ZGVariableQualifier)0, ZGEquals);
 		
 		ZGMemorySize numberOfEntries = MIN(MAX_VALUES_SCANNED, results.count);
 		PyObject *pythonResults = PyList_New((Py_ssize_t)numberOfEntries);
@@ -701,7 +701,7 @@ static PyObject *VirtualMemory_scanByteString(VirtualMemory *self, PyObject *arg
 			 dataAlignment:ZGDataAlignment(self->processType, ZGByteArray, dataSize)
 			 pointerSize:ZG_PROCESS_POINTER_SIZE(self->processType)];
 			
-			searchData.byteArrayFlags = ZGAllocateFlagsForByteArrayWildcards(byteArrayStringValue);
+			searchData.byteArrayFlags = ZGCreateFlagsForByteArrayWildcards(byteArrayStringValue);
 			
 			retValue = scanSearchData(self, searchData, "scanByteString");
 		}

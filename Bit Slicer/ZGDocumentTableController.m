@@ -344,7 +344,7 @@
 		{
 			if (proposedRow < 0)
 			{
-				return NO;
+				return NSDragOperationNone;
 			}
 			
 			NSArray<NSNumber *> *draggingRows = [draggingInfo.draggingPasteboard propertyListForType:ZGVariableRowsType];

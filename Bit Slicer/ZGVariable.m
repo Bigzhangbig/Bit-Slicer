@@ -161,8 +161,8 @@ NSString *ZGVariablePboardType = @"ZGVariablePboardType";
 		_size = (uint64_t)[coder decodeInt64ForKey:ZGSizeKey];
 		_enabled = [coder decodeBoolForKey:ZGEnabledKey];
 		_isFrozen = [coder decodeBoolForKey:ZGIsFrozenKey];
-		_type = [coder decodeInt32ForKey:ZGTypeKey];
-		_qualifier = [coder decodeInt32ForKey:ZGQualifierKey];
+		_type = (ZGVariableType)[coder decodeInt32ForKey:ZGTypeKey];
+		_qualifier = (ZGVariableQualifier)[coder decodeInt32ForKey:ZGQualifierKey];
 		_byteOrder = [coder decodeInt32ForKey:ZGByteOrderKey];
 		if (_byteOrder == CFByteOrderUnknown)
 		{

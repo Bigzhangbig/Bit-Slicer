@@ -164,12 +164,6 @@
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
 	[super restoreStateWithCoder:coder];
-	
-	// On 10.12, when search document windows are restored, the separator is thicker
-	// I don't know why this happens, but one workaround is just resetting the baseline separator property
-	// to NO and then back to YES
-	_toolbar.showsBaselineSeparator = NO;
-	_toolbar.showsBaselineSeparator = YES;
 }
 
 - (void)setupScopeBar
@@ -303,7 +297,7 @@
 		titleAccessoryViewController.layoutAttribute = NSLayoutAttributeBottom;
 		titleAccessoryViewController.view = _scopeBar;
 		_scopeBar.translatesAutoresizingMaskIntoConstraints = true;
-		_scopeBar.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+		_scopeBar.autoresizingMask = (NSAutoresizingMaskOptions)(NSViewWidthSizable | NSViewHeightSizable);
 		
 		[self.window addTitlebarAccessoryViewController:titleAccessoryViewController];
 	}
@@ -875,7 +869,7 @@
 		return;
 	}
 	
-	NSUInteger currentNumberOfIndirectLevelsInTable = [_searchController currentSearchAddressNumberOfIndirectLevelsWithDataType:_documentData.selectedDatatypeTag];
+	NSUInteger currentNumberOfIndirectLevelsInTable = [_searchController currentSearchAddressNumberOfIndirectLevelsWithDataType:(ZGVariableType)_documentData.selectedDatatypeTag];
 	
 	NSUInteger nextNumberOfIndirectLevels = (NSUInteger)_documentData.searchAddressMaxLevels;
 	if (nextNumberOfIndirectLevels == currentNumberOfIndirectLevelsInTable + 1)
@@ -970,7 +964,7 @@
 			{
 				_documentData.searchValue = _searchValueTextField.stringValue;
 				
-				ZGVariableType selectedDataType = _documentData.selectedDatatypeTag;
+				ZGVariableType selectedDataType = (ZGVariableType)_documentData.selectedDatatypeTag;
 				NSUInteger currentNumberOfIndirectLevelsInTable = [_searchController currentSearchAddressNumberOfIndirectLevelsWithDataType:selectedDataType];
 				
 				// Try to find an active variable the user may want to search its address for
@@ -1761,7 +1755,7 @@
 					NSNumber *codeInfoFlags = signingInformation[(NSString *)kSecCodeInfoFlags];
 					if (codeInfoFlags != nil)
 					{
-						SecCodeSignatureFlags codeSignatureFlags = codeInfoFlags.unsignedIntValue;
+						SecCodeSignatureFlags codeSignatureFlags = (SecCodeSignatureFlags)codeInfoFlags.unsignedIntValue;
 						
 						// I don't think kSecCodeSignatureRuntime is really correct (apps can opt into hardened runtime
 						// and still be debugged), but it's probably a good enough heuristic
@@ -1974,7 +1968,7 @@
 	if ([_tableController getBaseAddress:&baseAddress variable:selectedVariable])
 	{
 		ZGMemorySize pointerSize = self.currentProcess.pointerSize;
-		ZGVariable *watchVariable = [[ZGVariable alloc] initWithValue:NULL size:pointerSize address:baseAddress type:ZGPointer qualifier:0 pointerSize:pointerSize];
+		ZGVariable *watchVariable = [[ZGVariable alloc] initWithValue:NULL size:pointerSize address:baseAddress type:ZGPointer qualifier:(ZGVariableQualifier)0 pointerSize:pointerSize];
 		
 		[self _watchVariable:watchVariable watchPointType:(ZGWatchPointType)[(NSControl *)sender tag]];
 	}

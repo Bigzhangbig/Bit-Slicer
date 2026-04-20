@@ -108,8 +108,10 @@ do { \
 		} \
 	} \
 	\
-	ZGMemoryAddress strippedInstructionAddress = (ZGMemoryAddress)ptrauth_strip((void *)instructionAddress, ptrauth_key_function_pointer); \
-	ZGMemoryAddress signedUnauthenticatedAddress = (ZGMemoryAddress)ptrauth_sign_unauthenticated((void *)strippedInstructionAddress, ptrauth_key_function_pointer, 0); \
+	void *strippedPointer = ptrauth_strip((void *)instructionAddress, ptrauth_key_function_pointer); \
+	ZGMemoryAddress strippedInstructionAddress = (ZGMemoryAddress)(uintptr_t)strippedPointer; \
+	void *signedPointer = ptrauth_sign_unauthenticated((void *)strippedInstructionAddress, ptrauth_key_function_pointer, 0); \
+	ZGMemoryAddress signedUnauthenticatedAddress = (ZGMemoryAddress)(uintptr_t)signedPointer; \
 	\
 	setter(convertedThreadState, (void *)signedUnauthenticatedAddress); \
 	\

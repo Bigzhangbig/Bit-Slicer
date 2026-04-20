@@ -30,6 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import "ZGScriptPreferencesViewController.h"
 #import "ZGScriptManager.h"
 #import "ZGVariableController.h"
@@ -72,7 +73,17 @@ typedef NS_ENUM(NSInteger, ZGScriptIndentationTag)
 	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSMenuItem *defaultEditorMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedStringFromTable(@"defaultPythonEditor", ZGScriptPreferencesLocalizationTable, nil) action:NULL keyEquivalent:@""];
-	NSImage *extensionIcon = [workspace iconForFileType:@"py"];
+	
+	NSImage *extensionIcon;
+	UTType *pythonType = [UTType typeWithFilenameExtension:@"py"];
+	if (pythonType != nil)
+	{
+		extensionIcon = [workspace iconForContentType:pythonType];
+	}
+	else
+	{
+		extensionIcon = nil;
+	}
 	
 	defaultEditorMenuItem.image = [extensionIcon copy];
 	[defaultEditorMenuItem.image setSize:EDITOR_ICON_SIZE];

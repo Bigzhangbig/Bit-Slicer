@@ -2622,6 +2622,9 @@
 					"-Wno-reserved-identifier",
 					"-Wno-c23-extensions",
 					"-Wno-missing-include-dirs",
+					"-Wno-extra-semi-stmt",
+					"-Wno-implicit-void-ptr-cast",
+					"-Wno-quoted-include-in-framework-header",
 				);
 			};
 			name = Debug;
@@ -2740,6 +2743,9 @@
 					"-Wno-reserved-identifier",
 					"-Wno-c23-extensions",
 					"-Wno-missing-include-dirs",
+					"-Wno-extra-semi-stmt",
+					"-Wno-implicit-void-ptr-cast",
+					"-Wno-quoted-include-in-framework-header",
 				);
 			};
 			name = Release;

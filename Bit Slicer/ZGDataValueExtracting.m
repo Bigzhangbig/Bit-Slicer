@@ -250,7 +250,7 @@ NSArray<NSString *> *ZGByteArrayComponentsFromString(NSString *searchString)
 	return transformedByteArray;
 }
 
-unsigned char * _Nullable ZGAllocateFlagsForByteArrayWildcards(NSString *searchValue)
+unsigned char * _Nullable ZGCreateFlagsForByteArrayWildcards(NSString *searchValue)
 {
 	NSArray<NSString *> *bytesArray = ZGByteArrayComponentsFromString(searchValue);
 	

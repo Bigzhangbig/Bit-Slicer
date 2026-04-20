@@ -151,7 +151,7 @@
 		 size:size
 		 address:address
 		 type:ZGByteArray
-		 qualifier:0
+		 qualifier:(ZGVariableQualifier)0
 		 pointerSize:_pointerSize
 		 description:nil
 		 enabled:NO];
@@ -190,7 +190,7 @@
 			 size:size
 			 address:address
 			 type:ZGByteArray
-			 qualifier:0
+			 qualifier:(ZGVariableQualifier)0
 			 pointerSize:_pointerSize
 			 description:nil
 			 enabled:NO];

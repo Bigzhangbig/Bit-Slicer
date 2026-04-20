@@ -77,7 +77,7 @@
 	NSUInteger numberOfDynamicPointers = 0;
 	while (pivotLocation < length)
 	{
-		NSRange range = [remainingAddressFormula rangeOfString:@"[" options:(NSCaseInsensitiveSearch | NSLiteralSearch) range:NSMakeRange(pivotLocation, length - pivotLocation)];
+		NSRange range = [remainingAddressFormula rangeOfString:@"[" options:(NSStringCompareOptions)(NSCaseInsensitiveSearch | NSLiteralSearch) range:NSMakeRange(pivotLocation, length - pivotLocation)];
 		
 		if (range.location == NSNotFound)
 		{
