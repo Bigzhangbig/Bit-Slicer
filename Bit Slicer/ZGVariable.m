@@ -400,8 +400,16 @@ NSString *ZGVariablePboardType = @"ZGVariablePboardType";
 
 - (NSString *)stringValue
 {
-	[self updateStringValue];
+	if (_type == ZGScript)
+	{
+		NSArray<NSString *> *lines = [_scriptValue componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		if (lines.count > 0)
+		{
+			return [lines objectAtIndex:0];
+		}
+	}
 	
+	[self updateStringValue];
 	return (NSString * _Nonnull)_stringValue;
 }
 

@@ -564,14 +564,6 @@
 		}
 		else if ([tableColumn.identifier isEqualToString:@"value"])
 		{
-			if (variable.type == ZGScript)
-			{
-				NSArray<NSString *> *lines = [variable.scriptValue componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-				if (lines.count > 0)
-				{
-					return [lines objectAtIndex:0];
-				}
-			}
 			return variable.stringValue;
 		}
 		else if ([tableColumn.identifier isEqualToString:@"enabled"])

@@ -203,10 +203,7 @@ static NSString *ZGScriptIndentationSpacesWidthKey = @"ZGScriptIndentationSpaces
 	
 	for (ZGVariable *variable in variables)
 	{
-		if (variable.type != ZGScript)
-		{
-			[linesToWrite addObject:[@[variable.shortDescription, variable.addressFormula, variable.stringValue] componentsJoinedByString:@"\t"]];
-		}
+		[linesToWrite addObject:[@[variable.shortDescription, (variable.type != ZGScript) ? variable.addressFormula : @"", variable.stringValue] componentsJoinedByString:@"\t"]];
 	}
 	
 	[NSPasteboard.generalPasteboard
