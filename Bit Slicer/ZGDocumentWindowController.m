@@ -1349,7 +1349,7 @@
 	
 	else if (menuItem.action == @selector(copy:) || menuItem.action == @selector(cut:))
 	{
-		if (![[self selectedVariables] zgHasObjectMatchingCondition:^(ZGVariable *variable) { return (BOOL)(variable.type != ZGScript); }])
+		if ([[self selectedVariables] count] == 0)
 		{
 			return NO;
 		}

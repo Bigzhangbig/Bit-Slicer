@@ -244,6 +244,15 @@ static NSString *ZGScriptIndentationSpacesWidthKey = @"ZGScriptIndentationSpaces
 		NSArray<ZGVariable *> *variablesToInsertArray = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [ZGVariable class]]] fromData:pasteboardData error:&unarchiveError];
 		if (variablesToInsertArray != nil)
 		{
+			for (ZGVariable *variable in variablesToInsertArray)
+			{
+				if (variable.type == ZGScript)
+				{
+					variable.cachedScriptPath = nil;
+					variable.cachedScriptUUID = nil;
+				}
+			}
+
 			NSUInteger currentIndex = windowController.selectedVariableIndexes.count == 0 ? 0 : windowController.selectedVariableIndexes.firstIndex + 1;
 			
 			NSIndexSet *indexesToInsert = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(currentIndex, variablesToInsertArray.count)];

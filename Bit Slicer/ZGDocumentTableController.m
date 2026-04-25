@@ -481,6 +481,15 @@
 			return NO;
 		}
 		
+		for (ZGVariable *variable in variables)
+		{
+			if (variable.type == ZGScript)
+			{
+				variable.cachedScriptPath = nil;
+				variable.cachedScriptUUID = nil;
+			}
+		}
+		
 		NSMutableIndexSet *rowIndexes = [NSMutableIndexSet indexSet];
 		for (NSUInteger rowIndex = 0; rowIndex < variables.count; rowIndex++)
 		{
