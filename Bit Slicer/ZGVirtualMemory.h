@@ -55,8 +55,34 @@ bool ZGAllocateMemory(ZGMemoryMap processTask, ZGMemoryAddress *address, ZGMemor
 bool ZGDeallocateMemory(ZGMemoryMap processTask, ZGMemoryAddress address, ZGMemorySize size);
 
 // ZGReadBytes allocates memory, the caller is responsible for deallocating it using ZGFreeBytes(...)
+// Refuses single reads larger than 256 MB to prevent OOM.
 bool ZGReadBytes(ZGMemoryMap processTask, ZGMemoryAddress address, void **bytes, ZGMemorySize *size);
 bool ZGFreeBytes(void *bytes, ZGMemorySize size);
+
+// Returns Bit Slicer's own resident memory in MB.
+unsigned long long ZGResidentMemoryMB(void);
+
+// ZGRegionBuffer holds a reference to target process memory.
+// When isRemapped=true, bytes is a mach_vm_remap CoW mapping (zero-copy).
+// When isRemapped=false, bytes is a malloc'd buffer from ZGReadBytes.
+// Always use ZGFreeRegionBuffer to release.
+typedef struct {
+	ZGMemoryAddress address;
+	ZGMemorySize size;
+	void *bytes;
+	bool isRemapped;
+} ZGRegionBuffer;
+
+// Create a zero-copy CoW mapping of target process memory.
+// Falls back to ZGReadBytes if mach_vm_remap fails.
+bool ZGRemapRegion(ZGMemoryMap processTask, ZGMemoryAddress address, ZGMemorySize size, ZGRegionBuffer *buffer);
+
+// Release a region buffer (unmap if remapped, free if copied).
+bool ZGFreeRegionBuffer(ZGRegionBuffer *buffer);
+
+// Hint the kernel that pages in this range can be reclaimed.
+// Only meaningful for pages in the caller's own address space.
+void ZGAdviseFree(void *address, ZGMemorySize size);
 
 bool ZGWriteBytes(ZGMemoryMap processTask, ZGMemoryAddress address, const void *bytes, ZGMemorySize size);
 bool ZGWriteBytesOverwritingProtection(ZGMemoryMap processTask, ZGMemoryAddress address, const void *bytes, ZGMemorySize size);

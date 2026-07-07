@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 	ZGMemoryAddress _address;
 	ZGMemorySize _size;
 	void * _Nullable _bytes;
+	BOOL _isRemapped;
 #pragma clang diagnostic pop
 }
 
