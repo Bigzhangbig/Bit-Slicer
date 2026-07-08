@@ -99,6 +99,7 @@ bool ZGReadBytes(ZGMemoryMap processTask, ZGMemoryAddress address, void **bytes,
 	else
 	{
 		free(data);
+		*bytes = NULL;
 		return false;
 	}
 }
