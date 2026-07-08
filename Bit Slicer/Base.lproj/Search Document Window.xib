@@ -790,6 +790,21 @@
                             </searchFieldCell>
                         </searchField>
                     </searchToolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-E5F6-7890-ABCD-EF1234567890" label="New Scan" paletteLabel="New Scan" image="magnifyingglass" catalog="system" bordered="YES" sizingBehavior="auto" id="nScn-tI-Tem1" userLabel="New Scan">
+                        <connections>
+                            <action selector="newScan:" target="-1" id="nScn-aC-tOn1"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="B2C3D4E5-F6A7-8901-BCDE-F12345678901" label="Re-scan" paletteLabel="Re-scan" image="arrow.clockwise" catalog="system" bordered="YES" sizingBehavior="auto" id="rScn-tI-Tem2" userLabel="Re-scan">
+                        <connections>
+                            <action selector="rescan:" target="-1" id="rScn-aC-tOn2"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="C3D4E5F6-A7B8-9012-CDEF-123456789012" label="Undo Scan" paletteLabel="Undo Scan" image="arrow.uturn.backward" catalog="system" bordered="YES" sizingBehavior="auto" id="uScn-tI-Tem3" userLabel="Undo Scan">
+                        <connections>
+                            <action selector="undoScan:" target="-1" id="uScn-aC-tOn3"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="jO3-Z2-Pv7"/>
@@ -797,6 +812,9 @@
                     <toolbarItem reference="D2T-dX-W9r"/>
                     <toolbarItem reference="moB-Wu-fvx"/>
                     <toolbarItem reference="cbr-z0-cak"/>
+                    <toolbarItem reference="nScn-tI-Tem1"/>
+                    <toolbarItem reference="rScn-tI-Tem2"/>
+                    <toolbarItem reference="uScn-tI-Tem3"/>
                     <toolbarItem reference="sEk-qL-hC6"/>
                     <searchToolbarItem reference="tHJ-Bh-ZVW"/>
                 </defaultToolbarItems>

@@ -12,3 +12,9 @@
 
 /* 'New Tab' menu item for 10.12 and later for creating a new tabbed search window */
 "New Tab" = "Новая вкладка";
+
+/* Scan workflow buttons and round format */
+"newScanButton" = "Новое сканирование";
+"nextScanButton" = "Следующее сканирование";
+"undoScanButton" = "Отменить сканирование";
+"scanRoundFormat" = "Раунд %lu";

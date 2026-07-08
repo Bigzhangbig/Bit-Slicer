@@ -100,6 +100,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)requestEditingVariableDescription:(nullable id)sender;
 - (IBAction)requestEditingVariableAddress:(nullable id)sender;
 
+- (IBAction)newScan:(id)sender;
+- (IBAction)rescan:(id)sender;
+- (IBAction)undoScan:(id)sender;
+
 - (NSIndexSet *)selectedVariableIndexes;
 - (NSArray<ZGVariable *> *)selectedVariables;
 

@@ -232,6 +232,8 @@
 		77F1165C17D2F00A009E002A /* ZGCodeInjectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77F1165B17D2F00A009E002A /* ZGCodeInjectionWindowController.m */; };
 		77FFC107186BDA3600122357 /* ZGWatchVariableWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77FFC105186BDA3600122357 /* ZGWatchVariableWindowController.m */; };
 		77FFC14C18711D2700122357 /* ZGEditDescriptionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77FFC14A18711D2700122357 /* ZGEditDescriptionWindowController.m */; };
+		AA0000000000000000000003 /* ZGSearchSnapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000002 /* ZGSearchSnapshot.m */; };
+		AA0000000000000000000004 /* ZGSearchSnapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000002 /* ZGSearchSnapshot.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -596,6 +598,9 @@
 		7728211F189B854D0044E4BC /* ZGFunctionTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGFunctionTypes.m; path = "Bit Slicer/ZGFunctionTypes.m"; sourceTree = "<group>"; usesTabs = 1; };
 		77282121189E769B0044E4BC /* ZGStoredData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGStoredData.h; path = "Bit Slicer/ZGStoredData.h"; sourceTree = "<group>"; usesTabs = 1; };
 		77282122189E769B0044E4BC /* ZGStoredData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGStoredData.m; path = "Bit Slicer/ZGStoredData.m"; sourceTree = "<group>"; usesTabs = 1; };
+		AA0000000000000000000001 /* ZGSearchSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGSearchSnapshot.h; path = "Bit Slicer/ZGSearchSnapshot.h"; sourceTree = "<group>"; usesTabs = 1; };
+		AA0000000000000000000002 /* ZGSearchSnapshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGSearchSnapshot.m; path = "Bit Slicer/ZGSearchSnapshot.m"; sourceTree = "<group>"; usesTabs = 1; };
+
 		77282124189EA4520044E4BC /* ZGProcessTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGProcessTaskManager.h; path = "Bit Slicer/ZGProcessTaskManager.h"; sourceTree = "<group>"; usesTabs = 1; };
 		77282125189EA4520044E4BC /* ZGProcessTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZGProcessTaskManager.m; path = "Bit Slicer/ZGProcessTaskManager.m"; sourceTree = "<group>"; usesTabs = 1; };
 		772C0F7C18B88AFA009FFF72 /* ZGRegisterEntries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGRegisterEntries.h; path = "Bit Slicer/ZGRegisterEntries.h"; sourceTree = "<group>"; usesTabs = 1; };
@@ -1263,6 +1268,8 @@
 				720C192B271B4F9700740C8E /* ZGSearchProtectionMode.m */,
 				77282121189E769B0044E4BC /* ZGStoredData.h */,
 				77282122189E769B0044E4BC /* ZGStoredData.m */,
+				AA0000000000000000000001 /* ZGSearchSnapshot.h */,
+				AA0000000000000000000002 /* ZGSearchSnapshot.m */,
 				772DA7E71868F0A7009DD963 /* ZGSearchProgressDelegate.h */,
 				77F1161017D2EEE1009E002A /* ZGSearchProgress.h */,
 				77F1161117D2EEE1009E002A /* ZGSearchProgress.m */,
@@ -1571,6 +1578,7 @@
 				722EE7911B19580200934EF3 /* ZGVariableDataInfo.m in Sources */,
 				72431BA919BFFB6100418893 /* ZGDataValueExtracting.m in Sources */,
 				722CAAE219BBD7EE009C6AAE /* ZGStoredData.m in Sources */,
+				AA0000000000000000000004 /* ZGSearchSnapshot.m in Sources */,
 				77E1340419312B2E00B5B799 /* ZGSearchFunctions.mm in Sources */,
 				77E1340319312B2800B5B799 /* ZGSearchProgress.m in Sources */,
 				722CAAE119BBB5A1009C6AAE /* SearchVirtualMemoryTest.m in Sources */,
@@ -1612,6 +1620,7 @@
 				77F115CD17D2ED64009E002A /* ZGMemoryViewerController.m in Sources */,
 				77F115D017D2ED74009E002A /* ZGVerticalScrollerRepresenter.m in Sources */,
 				77282123189E769B0044E4BC /* ZGStoredData.m in Sources */,
+				AA0000000000000000000003 /* ZGSearchSnapshot.m in Sources */,
 				77F115D317D2ED82009E002A /* ZGStatusBarRepresenter.m in Sources */,
 				770F284218832132001B828C /* ZGBreakPointCondition.m in Sources */,
 				77F115D617D2ED8E009E002A /* ZGLineCountingRepresenter.m in Sources */,

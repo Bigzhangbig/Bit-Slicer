@@ -32,6 +32,7 @@
 
 #import "ZGDocumentSearchController.h"
 #import "ZGDocumentWindowController.h"
+#import "ZGSearchSnapshot.h"
 #import "ZGProcess.h"
 #import "ZGDocumentTableController.h"
 #import "ZGVirtualMemory.h"
@@ -60,6 +61,12 @@
 #import <DDMathParser/DDMathOperator.h>
 #pragma clang diagnostic pop
 
+typedef NS_ENUM(NSInteger, ZGPendingScanType) {
+    ZGPendingScanTypeNone = 0,
+    ZGPendingScanTypeNew,
+    ZGPendingScanTypeNext
+};
+
 @implementation ZGDocumentSearchController
 {
 	__weak ZGDocumentWindowController * _Nullable _windowController;
@@ -77,6 +84,10 @@
 	NSUInteger _searchResultStaticBinaryInitialInsertionIndex;
 	NSUInteger _searchResultStaticMainExecutableInsertionIndex;
 	NSUInteger _searchResultStaticOtherLibraryInsertionIndex;
+
+	NSUInteger _scanRound;
+	NSMutableArray<ZGSearchSnapshot *> *_scanHistory;
+	ZGPendingScanType _pendingScanType;
 }
 
 #pragma mark Class Utilities
@@ -133,6 +144,10 @@
 		_searchProgress = [[ZGSearchProgress alloc] init];
 		
 		_machBinaryAnnotationInfoQueue = dispatch_queue_create("com.zgcoder.search-mach-binary-info", DISPATCH_QUEUE_SERIAL);
+
+		_scanHistory = [[NSMutableArray alloc] init];
+		_scanRound = 0;
+		_pendingScanType = ZGPendingScanTypeNone;
 	}
 	
 	return self;
@@ -142,7 +157,9 @@
 {
 	// Force canceling
 	_searchProgress.shouldCancelSearch = YES;
-	
+
+	[self resetScanState];
+
 	_windowController = nil;
 }
 
@@ -224,6 +241,47 @@
 - (void)resumeFromTask
 {
 	[self resumeFromTaskAndMakeSearchFieldFirstResponder:YES];
+}
+
+#pragma mark Scan History
+
+- (NSUInteger)scanRound {
+	return _scanRound;
+}
+
+- (BOOL)hasScanHistory {
+	return _scanHistory.count > 0;
+}
+
+- (void)newScanWithString:(NSString *)searchStringValue dataType:(ZGVariableType)dataType pointerAddressSearch:(BOOL)pointerAddressSearch functionType:(ZGFunctionType)functionType storeValuesAfterSearch:(BOOL)storeValuesAfterSearch {
+	[self resetScanState];
+	_pendingScanType = ZGPendingScanTypeNew;
+	[self searchVariablesWithString:searchStringValue dataType:dataType pointerAddressSearch:pointerAddressSearch functionType:functionType storeValuesAfterSearch:storeValuesAfterSearch];
+}
+
+- (void)nextScanWithString:(NSString *)searchStringValue dataType:(ZGVariableType)dataType pointerAddressSearch:(BOOL)pointerAddressSearch functionType:(ZGFunctionType)functionType storeValuesAfterSearch:(BOOL)storeValuesAfterSearch {
+	_pendingScanType = ZGPendingScanTypeNext;
+	[self searchVariablesWithString:searchStringValue dataType:dataType pointerAddressSearch:pointerAddressSearch functionType:functionType storeValuesAfterSearch:storeValuesAfterSearch];
+}
+
+- (void)undoScan {
+	ZGDocumentWindowController *windowController = _windowController;
+	if (windowController != nil && _scanHistory.count > 0) {
+		[[windowController undoManager] undo];
+	}
+}
+
+- (void)resetScanState {
+	[_scanHistory removeAllObjects];
+	_scanRound = 0;
+	_pendingScanType = ZGPendingScanTypeNone;
+}
+
+- (void)popScanHistory {
+	if (_scanHistory.count > 0) {
+		[_scanHistory removeLastObject];
+		_scanRound--;
+	}
 }
 
 #pragma mark Update UI
@@ -1340,7 +1398,21 @@
 					{
 						windowController.undoManager.actionName = ZGLocalizableSearchDocumentString(@"undoSearchAction");
 						[(ZGDocumentWindowController *)[windowController.undoManager prepareWithInvocationTarget:windowController] updateVariables:oldVariables searchResults:self->_searchResults];
-						
+
+						// Manage scan round and history
+						if (self->_pendingScanType == ZGPendingScanTypeNew) {
+							self->_scanRound = 1;
+							[self->_scanHistory removeAllObjects];
+							ZGSearchSnapshot *snapshot = [[ZGSearchSnapshot alloc] initWithVariables:oldVariables searchResults:self->_searchResults];
+							[self->_scanHistory addObject:snapshot];
+						} else if (self->_pendingScanType == ZGPendingScanTypeNext) {
+							ZGSearchSnapshot *snapshot = [[ZGSearchSnapshot alloc] initWithVariables:oldVariables searchResults:self->_searchResults];
+							[self->_scanHistory addObject:snapshot];
+							self->_scanRound++;
+						}
+						self->_pendingScanType = ZGPendingScanTypeNone;
+						[windowController.window.toolbar validateVisibleItems];
+
 						self->_searchResults = self->_temporarySearchResults;
 						self->_documentData.variables = notSearchedVariables;
 						

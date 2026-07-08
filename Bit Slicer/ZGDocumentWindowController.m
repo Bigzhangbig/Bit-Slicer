@@ -464,7 +464,12 @@
 	NSString *formattedNumber = [numberOfVariablesFormatter stringFromNumber:@(variableCount)];
 	
 	NSString *valuesDisplayedString = [[NSString stringWithFormat:ZGLocalizableSearchDocumentString(@"displayingValuesLabelFormat"), variableCount] stringByReplacingOccurrencesOfString:@"_NUM_" withString:formattedNumber];
-	
+
+	if (_searchController.scanRound > 0) {
+		NSString *roundInfo = [NSString stringWithFormat:@"  |  %@", [NSString stringWithFormat:ZGLocalizableSearchDocumentString(@"scanRoundFormat"), (unsigned long)_searchController.scanRound]];
+		valuesDisplayedString = [valuesDisplayedString stringByAppendingString:roundInfo];
+	}
+
 	[self setStatusString:valuesDisplayedString];
 }
 
@@ -1202,7 +1207,11 @@
 	{
 		[(ZGDocumentWindowController *)[[self undoManager] prepareWithInvocationTarget:self] updateVariables:_documentData.variables searchResults:_searchController.searchResults];
 	}
-	
+
+	if ([self undoManager].isUndoing && _searchController.scanRound > 0) {
+		[_searchController popScanHistory];
+	}
+
 	_documentData.variables = newWatchVariablesArray;
 	_searchController.searchResults = searchResults;
 	
@@ -1613,13 +1622,23 @@
 	{
 		menuItem.hidden = NO;
 		menuItem.title = ZGLocalizableSearchDocumentString(@"toggleSearchTypeMenuItem");
-		
+
 		if ([_searchController canCancelTask])
 		{
 			return NO;
 		}
 	}
-	
+
+	else if (menuItem.action == @selector(newScan:)) {
+		return _searchController.canStartTask && self.currentProcess.valid;
+	}
+	else if (menuItem.action == @selector(rescan:)) {
+		return _searchController.canStartTask && self.currentProcess.valid && _searchController.scanRound > 0;
+	}
+	else if (menuItem.action == @selector(undoScan:)) {
+		return _searchController.hasScanHistory;
+	}
+
 	return [super validateUserInterfaceItem:userInterfaceItem];
 }
 
@@ -1704,7 +1723,11 @@
 					[[self undoManager] removeAllActions];
 				}
 				
-				[_searchController searchVariablesWithString:newSearchValue dataType:[self selectedDataType] pointerAddressSearch:(_documentData.searchType == ZGSearchTypeAddress) functionType:functionType storeValuesAfterSearch:_storeValuesAfterSearch];
+				if (_searchController.scanRound == 0) {
+					[_searchController newScanWithString:newSearchValue dataType:[self selectedDataType] pointerAddressSearch:(_documentData.searchType == ZGSearchTypeAddress) functionType:functionType storeValuesAfterSearch:_storeValuesAfterSearch];
+				} else {
+					[_searchController nextScanWithString:newSearchValue dataType:[self selectedDataType] pointerAddressSearch:(_documentData.searchType == ZGSearchTypeAddress) functionType:functionType storeValuesAfterSearch:_storeValuesAfterSearch];
+				}
 				
 				_performedRecentValueSearch = YES;
 			}
@@ -1729,6 +1752,55 @@
 			});
 		}
 	}
+}
+
+- (IBAction)newScan:(id)sender
+{
+    NSString *searchValue = _searchValueTextField.stringValue;
+    if (searchValue.length == 0 || !_searchController.canStartTask || !self.currentProcess.valid) return;
+
+    if (_documentData.searchType == ZGSearchTypeValue) {
+        _documentData.searchValue = searchValue;
+    } else {
+        _documentData.searchAddress = searchValue;
+    }
+
+    ZGFunctionType functionType = [self selectedFunctionType];
+    if (ZGIsFunctionTypeStore(functionType) && _searchData.savedData == nil) {
+        ZGRunAlertPanelWithOKButton(ZGLocalizableSearchDocumentString(@"noStoredValuesAlertTitle"), ZGLocalizableSearchDocumentString(@"noStoredValuesAlertMessage"));
+        return;
+    }
+
+    [[self undoManager] removeAllActions];
+    [_searchController newScanWithString:searchValue dataType:[self selectedDataType] pointerAddressSearch:(_documentData.searchType == ZGSearchTypeAddress) functionType:functionType storeValuesAfterSearch:_storeValuesAfterSearch];
+    _performedRecentValueSearch = YES;
+}
+
+- (IBAction)rescan:(id)sender
+{
+    NSString *searchValue = _searchValueTextField.stringValue;
+    if (searchValue.length == 0 || !_searchController.canStartTask || !self.currentProcess.valid) return;
+    if (_searchController.scanRound == 0) return;
+
+    if (_documentData.searchType == ZGSearchTypeValue) {
+        _documentData.searchValue = searchValue;
+    } else {
+        _documentData.searchAddress = searchValue;
+    }
+
+    ZGFunctionType functionType = [self selectedFunctionType];
+    if (ZGIsFunctionTypeStore(functionType) && _searchData.savedData == nil) {
+        ZGRunAlertPanelWithOKButton(ZGLocalizableSearchDocumentString(@"noStoredValuesAlertTitle"), ZGLocalizableSearchDocumentString(@"noStoredValuesAlertMessage"));
+        return;
+    }
+
+    [_searchController nextScanWithString:searchValue dataType:[self selectedDataType] pointerAddressSearch:(_documentData.searchType == ZGSearchTypeAddress) functionType:functionType storeValuesAfterSearch:_storeValuesAfterSearch];
+    _performedRecentValueSearch = YES;
+}
+
+- (IBAction)undoScan:(id)sender
+{
+    [_searchController undoScan];
 }
 
 - (BOOL)isCurrentProcessProtectedByEntitlement

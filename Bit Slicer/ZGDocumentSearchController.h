@@ -39,6 +39,7 @@
 
 @class ZGSearchProgress;
 @class ZGSearchResults;
+@class ZGSearchSnapshot;
 @class ZGDocumentWindowController;
 
 #define MAX_NUMBER_OF_VARIABLES_TO_FETCH ((NSUInteger)1000)
@@ -57,6 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL hasSavedValues;
 
+@property (nonatomic, readonly) NSUInteger scanRound;
+@property (nonatomic, readonly) BOOL hasScanHistory;
+
 - (BOOL)canStartTask;
 - (BOOL)canCancelTask;
 - (void)cancelTask;
@@ -74,6 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)currentSearchAddressNumberOfIndirectLevelsWithDataType:(ZGVariableType)dataType;
 - (void)invalidateStaticSearchResultMapping;
+
+- (void)newScanWithString:(NSString *)searchStringValue dataType:(ZGVariableType)dataType pointerAddressSearch:(BOOL)pointerAddressSearch functionType:(ZGFunctionType)functionType storeValuesAfterSearch:(BOOL)storeValuesAfterSearch;
+- (void)nextScanWithString:(NSString *)searchStringValue dataType:(ZGVariableType)dataType pointerAddressSearch:(BOOL)pointerAddressSearch functionType:(ZGFunctionType)functionType storeValuesAfterSearch:(BOOL)storeValuesAfterSearch;
+- (void)undoScan;
+- (void)resetScanState;
+- (void)popScanHistory;
 
 - (void)cleanUp;
 
