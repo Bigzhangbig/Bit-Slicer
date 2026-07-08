@@ -36,6 +36,11 @@
 #include <mach/task.h>
 #include <mach/mach_port.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+
+// Safety limits
+#define ZG_READ_BYTES_MAX_SIZE   (256ULL * 1024 * 1024)   // 256 MB per single read
+#define ZG_REMAP_RSS_LIMIT_MB    2048                      // 2 GB RSS cap for remap
 
 #include <TargetConditionals.h>
 
@@ -80,16 +85,34 @@ bool ZGDeallocateMemory(ZGMemoryMap processTask, ZGMemoryAddress address, ZGMemo
 	return (mach_vm_deallocate(processTask, address, size) == KERN_SUCCESS);
 }
 
+unsigned long long ZGResidentMemoryMB(void)
+{
+	struct mach_task_basic_info info;
+	mach_msg_type_number_t count = MACH_TASK_BASIC_INFO_COUNT;
+	if (task_info(mach_task_self(), MACH_TASK_BASIC_INFO, (task_info_t)&info, &count) == KERN_SUCCESS)
+	{
+		return info.resident_size / (1024ULL * 1024);
+	}
+	return 0;
+}
+
 bool ZGReadBytes(ZGMemoryMap processTask, ZGMemoryAddress address, void **bytes, ZGMemorySize *size)
 {
 	ZGMemorySize requestedSize = *size;
+
+	// Safety: refuse single reads larger than 256 MB to prevent OOM
+	if (requestedSize > ZG_READ_BYTES_MAX_SIZE)
+	{
+		return false;
+	}
+
 	void *data = malloc(requestedSize);
 	if (data == NULL)
 	{
 		return false;
 	}
 	*bytes = data;
-	
+
 	// mach_vm_read() may cause issues when reading multiple pages
 	// Let mach_vm_read_overwrite() handle the correct logic for us when requesting a large buffer size
 	if (mach_vm_read_overwrite(processTask, address, requestedSize, (mach_vm_address_t)data, size) == KERN_SUCCESS)
@@ -108,6 +131,110 @@ bool ZGFreeBytes(void *bytes, ZGMemorySize __unused size)
 {
 	free(bytes);
 	return true;
+}
+
+bool ZGRemapRegion(ZGMemoryMap processTask, ZGMemoryAddress address, ZGMemorySize size, ZGRegionBuffer *buffer)
+{
+	// Safety: refuse if our RSS already exceeds limit
+	if (ZGResidentMemoryMB() > ZG_REMAP_RSS_LIMIT_MB)
+	{
+		return false;
+	}
+
+	// Skip regions with 0 resident pages — remapping them and touching causes SIGBUS
+	{
+		mach_vm_address_t probeAddr = address;
+		mach_vm_size_t probeSize = size;
+		vm_region_extended_info_data_t extInfo;
+		mach_msg_type_number_t extCount = VM_REGION_EXTENDED_INFO_COUNT;
+		mach_port_t probeObj = MACH_PORT_NULL;
+		if (mach_vm_region(processTask, &probeAddr, &probeSize, VM_REGION_EXTENDED_INFO,
+			(vm_region_info_t)&extInfo, &extCount, &probeObj) == KERN_SUCCESS)
+		{
+			if (extInfo.pages_resident == 0)
+			{
+				return false;
+			}
+		}
+	}
+
+	// mach_vm_remap with copy=FALSE on self can cause issues (CoW within same map)
+	if (processTask != mach_task_self())
+	{
+		mach_vm_address_t localAddress = 0;
+		vm_prot_t curProtection = VM_PROT_NONE;
+		vm_prot_t maxProtection = VM_PROT_NONE;
+
+		kern_return_t kr = mach_vm_remap(
+			mach_task_self(),
+			&localAddress,
+			size,
+			0,
+			VM_FLAGS_ANYWHERE,
+			processTask,
+			address,
+			FALSE,  // copy=FALSE: CoW shared mapping, zero-copy
+			&curProtection,
+			&maxProtection,
+			VM_INHERIT_NONE
+		);
+
+		if (kr == KERN_SUCCESS)
+		{
+			buffer->address = address;
+			buffer->size = size;
+			buffer->bytes = (void *)localAddress;
+			buffer->isRemapped = true;
+			return true;
+		}
+	}
+
+	// Fallback: use traditional read
+	void *bytes = NULL;
+	ZGMemorySize readSize = size;
+	if (ZGReadBytes(processTask, address, &bytes, &readSize))
+	{
+		buffer->address = address;
+		buffer->size = readSize;
+		buffer->bytes = bytes;
+		buffer->isRemapped = false;
+		return true;
+	}
+
+	return false;
+}
+
+bool ZGFreeRegionBuffer(ZGRegionBuffer *buffer)
+{
+	if (buffer->bytes == NULL)
+	{
+		return true;
+	}
+
+	if (buffer->isRemapped)
+	{
+		kern_return_t kr = mach_vm_deallocate(
+			mach_task_self(),
+			(mach_vm_address_t)buffer->bytes,
+			buffer->size
+		);
+		buffer->bytes = NULL;
+		return (kr == KERN_SUCCESS);
+	}
+	else
+	{
+		ZGFreeBytes(buffer->bytes, buffer->size);
+		buffer->bytes = NULL;
+		return true;
+	}
+}
+
+void ZGAdviseFree(void *address, ZGMemorySize size)
+{
+	if (address != NULL && size > 0)
+	{
+		madvise(address, size, MADV_FREE);
+	}
 }
 
 bool ZGWriteBytes(ZGMemoryMap processTask, ZGMemoryAddress address, const void *bytes, ZGMemorySize size)

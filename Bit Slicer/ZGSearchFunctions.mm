@@ -265,6 +265,7 @@ struct ZGRegionValue
 	ZGMemoryAddress address;
 	ZGMemorySize size;
 	void *bytes;
+	bool isRemapped;
 };
 
 enum ZGPointerComparisonResult
@@ -385,19 +386,24 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 	const void **allResultSets = static_cast<const void **>(calloc(regionCount, sizeof(*allResultSets)));
 	assert(allResultSets != nullptr);
 
-	dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INITIATED, 0);
-	dispatch_queue_t queue = dispatch_queue_create("com.zgcoder.BitSlicer.ValueSearch", qosAttribute);
+	// ponytail: stream remap→scan→free per region to keep RSS constant.
+	// Old approach remapped ALL regions upfront then scanned in parallel —
+	// RSS ballooned with every touched page. Sequential streaming trades
+	// parallelism for O(1) RSS.
+	{
+		size_t regionIndex = 0;
+		for (ZGRegion *region in regions)
 
-	// Streaming scan: read each region, scan it, then free it immediately
-	// This keeps RSS at O(region_size) instead of O(total_memory)
-	dispatch_apply(regionCount, queue, ^(size_t regionIndex) {
-		@autoreleasepool
 		{
-			ZGRegion *region = regions[regionIndex];
+			if (searchProgress.shouldCancelSearch)
+			{
+				break;
+			}
+
+
 			ZGMemoryAddress address = region.address;
 			ZGMemorySize size = region.size;
 
-			NSData *results = nil;
 
 			if (dataBeginAddress < address + size && dataEndAddress > address)
 			{
@@ -406,10 +412,11 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 					size = dataEndAddress - address;
 				}
 
-				void *newRegionBytes = nullptr;
-				if (ZGReadBytes(processTask, address, &newRegionBytes, &size))
+				ZGRegionBuffer regionBuffer = {};
+				if (ZGRemapRegion(processTask, address, size, &regionBuffer))
+
 				{
-					void *savedRegionBytes = region.bytes;
+					NSData *results = nil;
 
 					ZGMemorySize dataIndex = 0;
 					if (dataBeginAddress > address)
@@ -421,35 +428,46 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 						}
 					}
 
-					if (!searchProgress.shouldCancelSearch)
-					{
-						void *extraStorage = usesExtraStorage ? calloc(1, dataSize) : nullptr;
+					void *extraStorage = usesExtraStorage ? calloc(1, dataSize) : nullptr;
 
-						results = helper(dataIndex, address, size, newRegionBytes, savedRegionBytes, extraStorage);
-						allResultSets[regionIndex] = CFBridgingRetain(results);
+					results = helper(dataIndex, address, regionBuffer.size, regionBuffer.bytes, regions[regionIndex].bytes, extraStorage);
+					allResultSets[regionIndex] = CFBridgingRetain(results);
 
-						free(extraStorage);
-					}
+					free(extraStorage);
 
-					// Free region bytes immediately after scanning
-					ZGFreeBytes(newRegionBytes, size);
+					// Free immediately — RSS stays constant
+					ZGFreeRegionBuffer(&regionBuffer);
+
+					[progressNotifier addResultSet:results != nil ? results : NSData.data staticMainExecutableResultSet:nil staticOtherLibraryResultSet:nil];
+				}
+				else
+				{
+					[progressNotifier addResultSet:NSData.data staticMainExecutableResultSet:nil staticOtherLibraryResultSet:nil];
 				}
 			}
+			else
+			{
+				[progressNotifier addResultSet:NSData.data staticMainExecutableResultSet:nil staticOtherLibraryResultSet:nil];
+			}
 
-			[progressNotifier addResultSet:results != nil ? results : NSData.data staticMainExecutableResultSet:nil staticOtherLibraryResultSet:nil];
+			regionIndex++;
 		}
-	});
-	
+	}
+
+
 	[progressNotifier stop];
-	
+
+	dispatch_queue_attr_t cleanupQos = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INITIATED, 0);
+	dispatch_queue_t cleanupQueue = dispatch_queue_create("com.zgcoder.BitSlicer.ValueSearchCleanup", cleanupQos);
+
 	NSArray<NSData *> *resultSets;
-	
+
 	if (searchProgress.shouldCancelSearch)
 	{
 		resultSets = [NSArray array];
-		
+
 		// Deallocate results into separate queue since this could take some time
-		dispatch_async(queue, ^{
+		dispatch_async(cleanupQueue, ^{
 			for (NSUInteger resultSetIndex = 0; resultSetIndex < regionCount; resultSetIndex++)
 			{
 				const void *resultSetData = allResultSets[resultSetIndex];
@@ -458,7 +476,7 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 					CFRelease(resultSetData);
 				}
 			}
-			
+
 			free(allResultSets);
 		});
 	}
@@ -471,19 +489,19 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 			if (resultSetData != nullptr)
 			{
 				NSData *resultSetObjCData = static_cast<NSData *>(CFBridgingRelease(resultSetData));
-				
+
 				if (resultSetObjCData.length != 0)
 				{
 					[filteredResultSets addObject:resultSetObjCData];
 				}
 			}
 		}
-		
+
 		free(allResultSets);
-		
+
 		resultSets = [filteredResultSets copy];
 	}
-	
+
 	return [[ZGSearchResults alloc] initWithResultSets:resultSets resultType:ZGSearchResultTypeDirect dataType:resultDataType stride:stride unalignedAccess:unalignedAccesses];
 }
 
@@ -2284,17 +2302,17 @@ EVALUATE_INDIRECT_ADDRESS_FOUND_MATCH:
 			}
 			else
 			{
-				ZGMemorySize newSize = regionValueEntry->size;
-				void *newBytes = nullptr;
-				if (!ZGReadBytes(processTask, regionValueEntry->address, &newBytes, &newSize))
+				ZGRegionBuffer regionBuffer = {};
+				if (!ZGRemapRegion(processTask, regionValueEntry->address, regionValueEntry->size, &regionBuffer))
 				{
 					validAddress = false;
 					break;
 				}
 				else
 				{
-					regionValueEntry->size = newSize;
-					regionValueEntry->bytes = newBytes;
+					regionValueEntry->size = regionBuffer.size;
+					regionValueEntry->bytes = regionBuffer.bytes;
+					regionValueEntry->isRemapped = regionBuffer.isRemapped;
 				}
 			}
 		}
@@ -2396,16 +2414,17 @@ ZGSearchResults *ZGSearchForIndirectPointer(ZGMemoryMap processTask, ZGSearchDat
 		NSUInteger regionIndex = 0;
 		for (ZGRegion *region in regions)
 		{
-			void *bytes = nullptr;
-			if (ZGReadBytes(processTask, region->_address, &bytes, &region->_size))
+			ZGRegionBuffer regionBuffer = {};
+			if (ZGRemapRegion(processTask, region->_address, region->_size, &regionBuffer))
 			{
-				ZGMemoryAddress address = region->_address;
-				
+				ZGMemoryAddress address = regionBuffer.address;
+				ZGMemorySize actualSize = regionBuffer.size;
+
 				if (needsToBuildPointerTableData)
 				{
-					ZGMemoryAddress endAddress = (region->_address + region->_size);
-					
-					const uint8_t *dataBytes = static_cast<const uint8_t *>(bytes);
+					ZGMemoryAddress endAddress = (regionBuffer.address + actualSize);
+
+					const uint8_t *dataBytes = static_cast<const uint8_t *>(regionBuffer.bytes);
 					ZGMemoryAddress pointerValue;
 					while (address + sizeof(pointerValue) <= endAddress)
 					{
@@ -2415,32 +2434,33 @@ ZGSearchResults *ZGSearchForIndirectPointer(ZGMemoryMap processTask, ZGSearchDat
 							ZGPointerValueEntry pointerValueEntry;
 							pointerValueEntry.pointerValue = pointerValue;
 							pointerValueEntry.address = address;
-							
+
 							[pointerTableData appendBytes:&pointerValueEntry length:sizeof(pointerValueEntry)];
 						}
-						
+
 						dataBytes += dataAlignment;
 						address += dataAlignment;
 					}
 				}
-				
+
 				if (narrowRegionsTable != nullptr)
 				{
 					ZGRegionValue *regionValue = &narrowRegionsTable[regionIndex];
-					regionValue->address = region->_address;
-					regionValue->size = region->_size;
-					regionValue->bytes = bytes;
+					regionValue->address = regionBuffer.address;
+					regionValue->size = actualSize;
+					regionValue->bytes = regionBuffer.bytes;
+					regionValue->isRemapped = regionBuffer.isRemapped;
 				}
 				else
 				{
-					ZGFreeBytes(bytes, region->_size);
+					ZGFreeRegionBuffer(&regionBuffer);
 				}
 			}
 			else
 			{
 				NSLog(@"Failed to read region bytes of size %llu", region->_size);
 			}
-			
+
 			regionIndex++;
 		}
 		
@@ -2600,6 +2620,11 @@ ZGSearchResults *ZGSearchForIndirectPointer(ZGMemoryMap processTask, ZGSearchDat
 		
 		dispatch_apply(previousIndirectResultSetsCount, queue, ^(size_t resultSetIndex) {
 			@autoreleasepool {
+				if (ZGResidentMemoryMB() > 2048)
+				{
+					searchProgress.shouldCancelSearch = YES;
+				}
+
 				if (searchProgress.shouldCancelSearch)
 				{
 					return;
@@ -2690,7 +2715,13 @@ ZGSearchResults *ZGSearchForIndirectPointer(ZGMemoryMap processTask, ZGSearchDat
 			ZGRegionValue regionValue = narrowRegionsTable[regionIndex];
 			if (regionValue.bytes != nullptr)
 			{
-				ZGFreeBytes(regionValue.bytes, regionValue.size);
+				ZGRegionBuffer buf = {
+					.address = regionValue.address,
+					.size = regionValue.size,
+					.bytes = regionValue.bytes,
+					.isRemapped = regionValue.isRemapped
+				};
+				ZGFreeRegionBuffer(&buf);
 				narrowRegionsTable[regionIndex].bytes = nullptr;
 			}
 		}
@@ -2802,6 +2833,11 @@ ZGSearchResults *ZGNarrowSearchForDataHelper(ZGSearchData *searchData, id <ZGSea
 	dispatch_apply(newResultSetCount, queue, ^(size_t resultSetIndex) {
 		@autoreleasepool
 		{
+			if (ZGResidentMemoryMB() > 2048)
+			{
+				searchProgress.shouldCancelSearch = YES;
+			}
+
 			if (!searchProgress.shouldCancelSearch)
 			{
 				NSData *oldResultSet = resultSetIndex < firstSearchResults.resultSets.count ? [firstSearchResults.resultSets objectAtIndex:resultSetIndex] : [laterSearchResults.resultSets objectAtIndex:resultSetIndex - firstSearchResults.resultSets.count];
@@ -2972,9 +3008,15 @@ NSData *ZGNarrowSearchWithFunctionType(F comparisonFunction, ZGMemoryMap process
 		{
 			if (lastUsedRegion != nil)
 			{
-				ZGFreeBytes(lastUsedRegion->_bytes, lastUsedRegion->_size);
+				ZGRegionBuffer oldBuf = {
+					.address = lastUsedRegion->_address,
+					.size = lastUsedRegion->_size,
+					.bytes = lastUsedRegion->_bytes,
+					.isRemapped = lastUsedRegion->_isRemapped
+				};
+				ZGFreeRegionBuffer(&oldBuf);
 			}
-			
+
 			ZGRegion *newRegion = nil;
 
 			if (pageToRegionTable == nil)
@@ -3016,21 +3058,26 @@ NSData *ZGNarrowSearchWithFunctionType(F comparisonFunction, ZGMemoryMap process
 					if (totalRegionSize != 0)
 					{
 						lastUsedRegion = [[ZGRegion alloc] initWithAddress:startPageAddress size:totalRegionSize];
-						
-						void *bytes = nullptr;
-						if (ZGReadBytes(processTask, lastUsedRegion->_address, &bytes, &lastUsedRegion->_size))
+
+						ZGRegionBuffer regionBuffer = {};
+						if (ZGRemapRegion(processTask, lastUsedRegion->_address, lastUsedRegion->_size, &regionBuffer))
 						{
-							lastUsedRegion->_bytes = bytes;
+							lastUsedRegion->_bytes = regionBuffer.bytes;
+							lastUsedRegion->_size = regionBuffer.size;
+							lastUsedRegion->_isRemapped = regionBuffer.isRemapped;
 						}
 						else
 						{
 							// Fall back to the minimum required range so candidates near region edges are not dropped
 							// just because an aligned page read could not be satisfied.
 							lastUsedRegion = [[ZGRegion alloc] initWithAddress:variableAddress size:dataSize];
-							
-							if (ZGReadBytes(processTask, lastUsedRegion->_address, &bytes, &lastUsedRegion->_size))
+
+							ZGRegionBuffer fallbackBuffer = {};
+							if (ZGRemapRegion(processTask, lastUsedRegion->_address, lastUsedRegion->_size, &fallbackBuffer))
 							{
-								lastUsedRegion->_bytes = bytes;
+								lastUsedRegion->_bytes = fallbackBuffer.bytes;
+								lastUsedRegion->_size = fallbackBuffer.size;
+								lastUsedRegion->_isRemapped = fallbackBuffer.isRemapped;
 							}
 							else
 							{
@@ -3065,9 +3112,15 @@ NSData *ZGNarrowSearchWithFunctionType(F comparisonFunction, ZGMemoryMap process
 	
 	if (lastUsedRegion != nil)
 	{
-		ZGFreeBytes(lastUsedRegion->_bytes, lastUsedRegion->_size);
+		ZGRegionBuffer lastBuf = {
+			.address = lastUsedRegion->_address,
+			.size = lastUsedRegion->_size,
+			.bytes = lastUsedRegion->_bytes,
+			.isRemapped = lastUsedRegion->_isRemapped
+		};
+		ZGFreeRegionBuffer(&lastBuf);
 	}
-	
+
 	return [NSData dataWithBytesNoCopy:narrowResultData length:numberOfVariablesFound * resultDataStride freeWhenDone:YES];
 }
 
@@ -3769,6 +3822,7 @@ ZGSearchResults *ZGNarrowIndirectSearchForData(ZGMemoryMap processTask, BOOL tra
 			regionValue.address = region.address;
 			regionValue.size = region.size;
 			regionValue.bytes = nullptr;
+			regionValue.isRemapped = false;
 			regionValues[regionIndex++] = regionValue;
 		}
 	}
@@ -3810,7 +3864,13 @@ ZGSearchResults *ZGNarrowIndirectSearchForData(ZGMemoryMap processTask, BOOL tra
 		ZGRegionValue regionValue = regionValues[regionIndex];
 		if (regionValue.bytes != nullptr)
 		{
-			ZGFreeBytes(regionValue.bytes, regionValue.size);
+			ZGRegionBuffer buf = {
+				.address = regionValue.address,
+				.size = regionValue.size,
+				.bytes = regionValue.bytes,
+				.isRemapped = regionValue.isRemapped
+			};
+			ZGFreeRegionBuffer(&buf);
 			regionValues[regionIndex].bytes = nullptr;
 		}
 	}
