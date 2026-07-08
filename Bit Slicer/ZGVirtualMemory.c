@@ -83,7 +83,7 @@ bool ZGDeallocateMemory(ZGMemoryMap processTask, ZGMemoryAddress address, ZGMemo
 bool ZGReadBytes(ZGMemoryMap processTask, ZGMemoryAddress address, void **bytes, ZGMemorySize *size)
 {
 	ZGMemorySize requestedSize = *size;
-	void *data = calloc(1, requestedSize);
+	void *data = malloc(requestedSize);
 	if (data == NULL)
 	{
 		return false;

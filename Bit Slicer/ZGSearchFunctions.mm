@@ -384,91 +384,60 @@ ZGSearchResults *ZGSearchForDataHelper(ZGMemoryMap processTask, ZGSearchData *se
 	
 	const void **allResultSets = static_cast<const void **>(calloc(regionCount, sizeof(*allResultSets)));
 	assert(allResultSets != nullptr);
-	
-	// Reading all regions upfront is more efficient than having separate worker threads read the region bytes
-	ZGRegionValue *newRegionValues = static_cast<ZGRegionValue *>(calloc(regionCount, sizeof(*newRegionValues)));
-	assert(newRegionValues != nullptr);
-	{
-		size_t regionIndex = 0;
-		for (ZGRegion *region in regions)
+
+	dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INITIATED, 0);
+	dispatch_queue_t queue = dispatch_queue_create("com.zgcoder.BitSlicer.ValueSearch", qosAttribute);
+
+	// Streaming scan: read each region, scan it, then free it immediately
+	// This keeps RSS at O(region_size) instead of O(total_memory)
+	dispatch_apply(regionCount, queue, ^(size_t regionIndex) {
+		@autoreleasepool
 		{
+			ZGRegion *region = regions[regionIndex];
 			ZGMemoryAddress address = region.address;
 			ZGMemorySize size = region.size;
-			
+
+			NSData *results = nil;
+
 			if (dataBeginAddress < address + size && dataEndAddress > address)
 			{
 				if (dataEndAddress < address + size)
 				{
 					size = dataEndAddress - address;
 				}
-				
+
 				void *newRegionBytes = nullptr;
 				if (ZGReadBytes(processTask, address, &newRegionBytes, &size))
 				{
-					ZGRegionValue regionValue = {address, size, newRegionBytes};
-					newRegionValues[regionIndex] = regionValue;
-				}
-			}
-			
-			regionIndex++;
-		}
-	}
-	
-	dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INITIATED, 0);
-	dispatch_queue_t queue = dispatch_queue_create("com.zgcoder.BitSlicer.ValueSearch", qosAttribute);
-	
-	dispatch_apply(regionCount, queue, ^(size_t regionIndex) {
-		@autoreleasepool
-		{
-			ZGRegionValue newRegionValue = newRegionValues[regionIndex];
-			
-			NSData *results = nil;
-			
-			void *newRegionBytes = newRegionValue.bytes;
-			if (newRegionBytes != nullptr)
-			{
-				ZGMemoryAddress address = newRegionValue.address;
-				ZGMemorySize size = newRegionValue.size;
-				void *savedRegionBytes = regions[regionIndex].bytes;
-				
-				ZGMemorySize dataIndex = 0;
-				if (dataBeginAddress > address)
-				{
-					dataIndex = (dataBeginAddress - address);
-					if (dataIndex % dataAlignment > 0)
+					void *savedRegionBytes = region.bytes;
+
+					ZGMemorySize dataIndex = 0;
+					if (dataBeginAddress > address)
 					{
-						dataIndex += dataAlignment - (dataIndex % dataAlignment);
+						dataIndex = (dataBeginAddress - address);
+						if (dataIndex % dataAlignment > 0)
+						{
+							dataIndex += dataAlignment - (dataIndex % dataAlignment);
+						}
 					}
-				}
-				
-				if (!searchProgress.shouldCancelSearch)
-				{
-					void *extraStorage = usesExtraStorage ? calloc(1, dataSize) : nullptr;
-					
-					results = helper(dataIndex, address, size, newRegionBytes, savedRegionBytes, extraStorage);
-					allResultSets[regionIndex] = CFBridgingRetain(results);
-					
-					free(extraStorage);
+
+					if (!searchProgress.shouldCancelSearch)
+					{
+						void *extraStorage = usesExtraStorage ? calloc(1, dataSize) : nullptr;
+
+						results = helper(dataIndex, address, size, newRegionBytes, savedRegionBytes, extraStorage);
+						allResultSets[regionIndex] = CFBridgingRetain(results);
+
+						free(extraStorage);
+					}
+
+					// Free region bytes immediately after scanning
+					ZGFreeBytes(newRegionBytes, size);
 				}
 			}
-			
+
 			[progressNotifier addResultSet:results != nil ? results : NSData.data staticMainExecutableResultSet:nil staticOtherLibraryResultSet:nil];
 		}
-	});
-	
-	// Deallocate region data in background
-	dispatch_async(queue, ^{
-		for (size_t newRegionIndex = 0; newRegionIndex < regionCount; newRegionIndex++)
-		{
-			ZGRegionValue newRegionValue = newRegionValues[newRegionIndex];
-			void *bytes = newRegionValue.bytes;
-			if (bytes != nullptr)
-			{
-				ZGFreeBytes(bytes, newRegionValue.size);
-			}
-		}
-		
-		free(newRegionValues);
 	});
 	
 	[progressNotifier stop];
