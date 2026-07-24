@@ -207,10 +207,10 @@
 "xya-wF-ZfW.title" = "单精度浮点";
 
 /* Class = "NSMenuItem"; title = "value"; ObjectID = "NpW-LA-vBl"; */
-"NpW-LA-vBl.title" = "value";
+"NpW-LA-vBl.title" = "值";
 
 /* Class = "NSMenuItem"; title = "address"; ObjectID = "v88-2O-5zY"; */
-"v88-2O-5zY.title" = "address";
+"v88-2O-5zY.title" = "地址";
 
 /* Class = "NSMenuItem"; title = "Watch Write Accesses…"; ObjectID = "100787"; */
 "100787.title" = "监视写入访问…";
